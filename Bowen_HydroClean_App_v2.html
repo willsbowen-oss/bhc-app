@@ -33,7 +33,7 @@ h1,h2,h3,h4,.logo-text,.stat-value,.total-big{font-family:'Syne',sans-serif}
 .notif-bell{background:none;border:none;color:var(--gray2);cursor:pointer;padding:6px;border-radius:8px;position:relative;display:flex}
 .notif-bell:hover{color:white}
 .notif-badge{position:absolute;top:2px;right:2px;width:16px;height:16px;background:var(--red);color:white;border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
-.main{display:flex;flex:1;overflow:hidden}
+.main{display:flex;flex:1;overflow:hidden;min-width:0}
 .sidebar{background:var(--navy2);width:200px;flex-shrink:0;padding:16px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
 .nav-section{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--gray);text-transform:uppercase;padding:14px 10px 5px}
 .nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;cursor:pointer;color:var(--gray2);font-size:13px;font-weight:500;transition:all 0.12s;border:none;background:none;width:100%;text-align:left;position:relative}
@@ -41,10 +41,10 @@ h1,h2,h3,h4,.logo-text,.stat-value,.total-big{font-family:'Syne',sans-serif}
 .nav-item.active{color:white;background:var(--blue);box-shadow:0 4px 14px rgba(14,165,233,0.4)}
 .nav-item svg{width:16px;height:16px;flex-shrink:0}
 .nav-badge{position:absolute;right:10px;background:var(--orange);color:white;border-radius:10px;font-size:9px;font-weight:700;padding:2px 6px}
-.content{flex:1;padding:22px;overflow-y:auto}
-.card{background:white;border-radius:14px;padding:20px;border:1px solid var(--border)}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:20px}
-.stat-card{background:white;border-radius:12px;padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s}
+.content{flex:1;padding:22px;overflow-y:auto;overflow-x:hidden;min-width:0;max-width:100%}
+.card{background:white;border-radius:14px;padding:20px;border:1px solid var(--border);min-width:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+.stat-card{background:white;border-radius:12px;padding:18px;border:1px solid var(--border);position:relative;overflow:hidden;transition:transform 0.15s,box-shadow 0.15s;min-width:0}
 .stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08)}
 .stat-label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
 .stat-value{font-size:26px;font-weight:800;color:var(--text);line-height:1}
@@ -80,11 +80,11 @@ tr:hover td{background:#F8FAFC}
 .fg{display:flex;flex-direction:column;gap:5px}
 .fg.full{grid-column:1/-1}
 label{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px}
-input,select,textarea{border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.12s;background:white;width:100%}
+input,select,textarea{border:1.5px solid var(--border);border-radius:9px;padding:10px 13px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.12s;background:white;width:100%;min-width:0}
 input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(14,165,233,0.1)}
 textarea{resize:vertical;min-height:75px}
 .section-title{font-size:15px;font-weight:700;margin-bottom:14px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .timeline{display:flex;margin:12px 0 4px}
 .tl-step{flex:1;text-align:center;position:relative}
 .tl-step::before{content:'';position:absolute;top:13px;left:50%;right:-50%;height:2px;background:var(--border);z-index:0}
@@ -96,11 +96,11 @@ textarea{resize:vertical;min-height:75px}
 .email-card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.13s}
 .email-card:hover,.email-card.sel{border-color:var(--blue);background:#F0F9FF}
 .email-preview{background:#F8FAFC;border-radius:9px;padding:14px;font-size:12px;line-height:1.75;color:var(--text);white-space:pre-line;border:1px solid var(--border)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:200;padding:16px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px}
 .modal{background:white;border-radius:16px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;padding:24px}
 .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 .modal-title{font-size:18px;font-weight:800}
-.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:300;padding:16px}
+.ai-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:99999;padding:16px}
 .ai-box{background:white;border-radius:18px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;padding:24px;border:2px solid var(--blue)}
 .ai-header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .ai-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
@@ -255,6 +255,9 @@ textarea{resize:vertical;min-height:75px}
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
       <input type="file" accept=".json" onchange="importData(this)" style="display:none">
     </label>
+    <button onclick="reinitialiserApp()" title="Réinitialiser / Corriger les erreurs" style="background:none;border:none;color:var(--gray2);cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+    </button>
     <button onclick="toggleDarkMode()" id="darkToggle" title="Mode sombre" style="background:none;border:none;color:var(--gray2);cursor:pointer;padding:6px;border-radius:8px;display:flex;align-items:center">
       <svg id="darkIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
@@ -348,6 +351,17 @@ let state={
   devisItems:[{id:1,type:'Terrasse & allée',surface:0,prixUnit:7}],
   devisOptions:{},  // {type: surface} for additional services
   devisClient:'',devisVille:'',devisNote:'',devisTel:'',devisEmail:'',devisDates:[],
+  clientSelMode:false,
+  clientSelIds:new Set(),
+  mkSelIds:new Set(),
+  flyerSelIds:new Set(),
+  flyerImage:null,
+  flyerAiMsg:'',
+  mkTab:'campagne',
+  clientSearch:'',
+  prospection:{contacts:[],filtre:'restaurant',rayon:10},
+  rapportMois:new Date().getMonth(),
+  rapportAnnee:new Date().getFullYear(),
   devisTab:'nouveau',
   marketingTab:'campagnes',
   campagnes:[],
@@ -416,9 +430,10 @@ function loadStorage(){
   try{const d=localStorage.getItem('bhc-factures');if(d)state.factures=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-settings');if(d)state.settings=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-campagnes');if(d)state.campagnes=JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem('bhc-prospection');if(d)state.prospection=JSON.parse(d);}catch(e){}
 }
 function saveStorage(field){
-  const map={clients:'bhc-clients',chantiers:'bhc-chantiers',monthly:'bhc-monthly',employes:'bhc-employes',heures:'bhc-heures',devisLog:'bhc-devislog',factures:'bhc-factures',settings:'bhc-settings',campagnes:'bhc-campagnes'};
+  const map={clients:'bhc-clients',chantiers:'bhc-chantiers',monthly:'bhc-monthly',employes:'bhc-employes',heures:'bhc-heures',devisLog:'bhc-devislog',factures:'bhc-factures',settings:'bhc-settings',campagnes:'bhc-campagnes',prospection:'bhc-prospection'};
   try{localStorage.setItem(map[field],JSON.stringify(state[field]));showSaveIndicator();}catch(e){}
 }
 function showSaveIndicator(){
@@ -428,6 +443,99 @@ function showSaveIndicator(){
 }
 
 // NOTIFICATIONS
+function badgeHtml(statut){
+  const map={
+    'Terminé':'<span class="badge bg">Terminé</span>',
+    'En cours':'<span class="badge bb">En cours</span>',
+    'Planifié':'<span class="badge bo">Planifié</span>',
+    'En attente':'<span class="badge bn">En attente</span>',
+    'Annulé':'<span class="badge" style="background:#FEE2E2;color:#DC2626">Annulé</span>',
+  };
+  return map[statut]||`<span class="badge bn">${statut}</span>`;
+}
+
+function formatDate(d){
+  if(!d)return '—';
+  try{
+    const [y,m,j]=d.split('-');
+    return `${j}.${m}.${y}`;
+  }catch(e){return d;}
+}
+
+function formatMontant(n){
+  return 'CHF '+(Math.round(n||0)).toLocaleString('fr-CH');
+}
+
+function formatTel(tel){
+  if(!tel)return '—';
+  return tel;
+}
+
+function getClientById(id){
+  return state.clients.find(c=>c.id===id)||null;
+}
+
+function getChanById(id){
+  return state.chantiers.find(c=>c.id===id)||null;
+}
+
+function getChantiersTomorrow(){
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  const y=tom.getFullYear(),m=String(tom.getMonth()+1).padStart(2,'0'),d=String(tom.getDate()).padStart(2,'0');
+  const tomStr=`${y}-${m}-${d}`;
+  return state.chantiers.filter(c=>c.date===tomStr&&c.statut!=='Terminé');
+}
+
+function reminderAlreadySentToday(){
+  const today=new Date().toISOString().split('T')[0];
+  return localStorage.getItem('bhc-reminder-sent')===today;
+}
+
+function markReminderSentToday(){
+  localStorage.setItem('bhc-reminder-sent',new Date().toISOString().split('T')[0]);
+}
+
+function openReminderModal(auto){
+  const chantiers=getChantiersTomorrow();
+  if(!chantiers.length){if(auto)return;alert('Aucun chantier planifié demain.');return;}
+  if(auto&&reminderAlreadySentToday())return;
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  const tomLabel=tom.toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long'});
+  let rows='';
+  chantiers.forEach(c=>{
+    const emps=(c.employes||[]).map(id=>state.employes.find(e=>e.id===id)).filter(Boolean);
+    const client=state.clients.find(x=>x.nom===c.client)||{};
+    const addr=[c.adresse||client.adresse||'',c.ville||client.ville||''].filter(Boolean).join(', ');
+    rows+=`<div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div style="font-weight:700;font-size:14px;margin-bottom:3px">${c.client}</div>
+      <div style="font-size:12px;color:var(--gray);margin-bottom:10px">${c.type} · ${c.surface}m² · ${addr}</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${emps.map(e=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;background:white;padding:8px 12px;border-radius:8px">
+            <span style="font-size:13px;font-weight:600">${e.nom}</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm" style="background:#25D366;color:white" onclick="envoyerRappelWA(${c.id},${e.id})">WA</button>
+              <button class="btn btn-secondary btn-sm" onclick="envoyerRappelEmail(${c.id},${e.id})">Email</button>
+            </div>
+          </div>`).join('')}
+        ${emps.length===0?`<div style="font-size:12px;color:var(--gray)">Aucun employé affecté</div>`:''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">⏰ Rappels demain</div><div style="font-size:12px;color:var(--gray)">${tomLabel} · ${chantiers.length} chantier${chantiers.length>1?'s':''}</div></div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+    ${rows}
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-primary btn-sm" onclick="envoyerTousRappels()">Envoyer tous</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+    </div>`;
+  openModal();
+  markReminderSentToday();
+}
+
 function getNotifications(){
   const now=new Date(),notifs=[];
   state.chantiers.forEach(c=>{
@@ -489,7 +597,13 @@ function render(){
   else if(state.page==='rapport')c.innerHTML=renderRapport();
   else if(state.page==='marketing')c.innerHTML=renderMarketing();
   else if(state.page==='emails')c.innerHTML=renderEmails();
-  if(state.page==='dashboard')setTimeout(initChart,50);
+  if(state.page==='dashboard'){setTimeout(initChart,50);setTimeout(fetchMeteo,100);}
+  setTimeout(initSwipe,50);
+  // Update nav badges
+  document.querySelectorAll('.nav-item,.bn-item').forEach(el=>{
+    const id=el.id?.replace('nav-','');
+    el.classList.toggle('active',id===state.page);
+  });
 }
 
 // DASHBOARD
@@ -507,6 +621,18 @@ function renderDashboard(){
   const alertHtml=notifs.length?`<div class="alert alert-orange">📅 <strong>${notifs.length} chantier${notifs.length>1?'s':''} prévu${notifs.length>1?'s':''} dans les 7 prochains jours</strong> — Pensez à confirmer avec vos clients.</div>`:'';
   const recent=[...state.chantiers].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4);
 
+  // Stats avancées
+  const revMois=state.chantiers.filter(c=>c.statut==='Terminé'&&new Date(c.date).getMonth()===mois&&new Date(c.date).getFullYear()===annee).reduce((s,c)=>s+c.montant,0);
+  const revMoisPrec=state.chantiers.filter(c=>{const d=new Date(c.date);const pm=mois===0?11:mois-1;const pa=mois===0?annee-1:annee;return c.statut==='Terminé'&&d.getMonth()===pm&&d.getFullYear()===pa;}).reduce((s,c)=>s+c.montant,0);
+  const evol=revMoisPrec>0?Math.round((revMois-revMoisPrec)/revMoisPrec*100):0;
+  const objectif=state.settings.objectifMensuel||5000;
+  const pctObj=Math.min(100,Math.round(revMois/objectif*100));
+  // Meilleure prestation
+  const byType={};ter.forEach(c=>{byType[c.type]=(byType[c.type]||0)+c.montant;});
+  const bestType=Object.entries(byType).sort((a,b)=>b[1]-a[1])[0];
+  // Factures impayées
+  const impayees=state.factures.filter(f=>f.statut==='envoyée'&&new Date(f.dateEcheance)<now);
+
   // Employee performance this month
   const hMois=state.heures.filter(h=>new Date(h.date).getMonth()===mois&&new Date(h.date).getFullYear()===annee);
   const empPerf=state.employes.filter(e=>e.actif).map(e=>{
@@ -521,7 +647,6 @@ function renderDashboard(){
   });
   const maxH=Math.max(...empPerf.map(p=>p.heures),1);
   const maxMPh=Math.max(...empPerf.map(p=>p.mPh),1);
-
   const moisNom=new Date(annee,mois,1).toLocaleDateString('fr-CH',{month:'long',year:'numeric'});
 
   return `
@@ -534,11 +659,45 @@ function renderDashboard(){
     </div>
   </div>
   ${alertHtml}
-  <div class="stat-grid">
-    <div class="stat-card"><div class="stat-label">Revenus réalisés</div><div class="stat-value">CHF ${totalRev.toLocaleString()}</div><div class="stat-sub">Chantiers terminés</div><div class="stat-icon si-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
-    <div class="stat-card"><div class="stat-label">En cours</div><div class="stat-value">${enCours}</div><div class="stat-sub">Chantier${enCours!==1?'s':''} actif${enCours!==1?'s':''}</div><div class="stat-icon si-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div></div>
-    <div class="stat-card"><div class="stat-label">À planifier</div><div class="stat-value">${planifié}</div><div class="stat-sub">En attente</div><div class="stat-icon si-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div></div>
-    <div class="stat-card"><div class="stat-label">Clients</div><div class="stat-value">${state.clients.length}</div><div class="stat-sub">Total actifs</div><div class="stat-icon si-navy"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+  ${impayees.length>0?`<div class="alert" style="background:#FEE2E2;color:#991B1B;border-left:3px solid var(--red);margin-bottom:14px">⚠️ <strong>${impayees.length} facture${impayees.length>1?'s':''} en retard</strong> — <button onclick="navigate('factures')" style="background:none;border:none;color:#DC2626;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline">Voir les factures →</button></div>`:''}
+
+  <!-- MÉTÉO + STATS RAPIDES -->
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:14px;margin-bottom:14px;align-items:stretch">
+    <div class="card" id="meteo-card" style="min-width:160px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;cursor:pointer" onclick="fetchMeteo()" title="Cliquez pour actualiser">
+      <div id="meteo-content" style="text-align:center">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🌤 Météo Domdidier</div>
+        <div style="font-size:32px;margin-bottom:4px" id="meteo-icon">⏳</div>
+        <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--navy)" id="meteo-temp">—</div>
+        <div style="font-size:11px;color:var(--gray);margin-top:4px" id="meteo-desc">Chargement...</div>
+        <div style="font-size:10px;color:var(--gray2);margin-top:3px" id="meteo-extra"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px">
+      <div class="stat-card"><div class="stat-label">Revenus réalisés</div><div class="stat-value">CHF ${totalRev.toLocaleString()}</div><div class="stat-sub">Chantiers terminés</div><div class="stat-icon si-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+      <div class="stat-card"><div class="stat-label">Ce mois</div><div class="stat-value" style="color:var(--${revMois>0?'green':'gray'})">CHF ${revMois.toLocaleString()}</div><div class="stat-sub" style="color:${evol>0?'var(--green)':evol<0?'var(--red)':'var(--gray)'}">${evol>0?'↑ +'+evol+'%':evol<0?'↓ '+evol+'%':'Nouveau mois'} vs mois préc.</div><div class="stat-icon si-green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div></div>
+      <div class="stat-card"><div class="stat-label">En cours</div><div class="stat-value">${enCours}</div><div class="stat-sub">${planifié} à planifier</div><div class="stat-icon si-orange"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div></div>
+      <div class="stat-card"><div class="stat-label">Clients</div><div class="stat-value">${state.clients.length}</div><div class="stat-sub">Total actifs</div><div class="stat-icon si-navy"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+    </div>
+  </div>
+
+  <!-- OBJECTIF MENSUEL -->
+  <div class="card" style="margin-bottom:14px;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-weight:700;font-size:14px">🎯 Objectif mensuel</div>
+        <div style="font-size:11px;color:var(--gray)">CHF ${revMois.toLocaleString()} / CHF ${objectif.toLocaleString()}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px">
+        ${bestType?`<div style="background:var(--bg);border-radius:8px;padding:6px 12px;font-size:11px"><span style="color:var(--gray)">Meilleure prestation : </span><strong>${bestType[0]}</strong> — CHF ${bestType[1].toLocaleString()}</div>`:''}
+        <button onclick="setObjectifMensuel()" style="background:none;border:1px solid var(--border);color:var(--gray);border-radius:8px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">⚙️ Objectif</button>
+      </div>
+    </div>
+    <div style="background:var(--border);border-radius:20px;height:10px;overflow:hidden;position:relative">
+      <div style="height:100%;width:${pctObj}%;background:linear-gradient(90deg,${pctObj>=100?'#10B981,#34D399':pctObj>=70?'#F59E0B,#FCD34D':'#0EA5E9,#38BDF8'});border-radius:20px;transition:width 0.8s ease;position:relative">
+        ${pctObj>=10?`<span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:8px;font-weight:700;color:white">${pctObj}%</span>`:''}
+      </div>
+    </div>
+    ${pctObj>=100?`<div style="font-size:11px;color:var(--green);margin-top:6px;font-weight:700">🎉 Objectif atteint ce mois !</div>`:pctObj>=70?`<div style="font-size:11px;color:var(--orange);margin-top:6px">CHF ${(objectif-revMois).toLocaleString()} restants pour atteindre l'objectif</div>`:`<div style="font-size:11px;color:var(--gray);margin-top:6px">CHF ${(objectif-revMois).toLocaleString()} restants pour atteindre l'objectif</div>`}
   </div>
 
   <div class="grid2">
@@ -637,6 +796,72 @@ function renderDashboard(){
       </div>`}
   </div>`;
 }
+
+// ══════════════════════════════════════════════════════════
+// METEO DOMDIDIER
+// ══════════════════════════════════════════════════════════
+async function fetchMeteo(){
+  const icon=document.getElementById('meteo-icon');
+  const temp=document.getElementById('meteo-temp');
+  const desc=document.getElementById('meteo-desc');
+  const extra=document.getElementById('meteo-extra');
+  if(!icon)return;
+  icon.textContent='...';desc.textContent='Chargement...';
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=46.9&longitude=7.02&current=temperature_2m,weathercode,windspeed_10m,precipitation&hourly=precipitation_probability&timezone=Europe%2FZurich&forecast_days=1',{method:'GET',mode:'cors'});
+    const d=await r.json();
+    const t=Math.round(d.current.temperature_2m);
+    const code=d.current.weathercode;
+    const wind=Math.round(d.current.windspeed_10m);
+    const rainProb=d.hourly&&d.hourly.precipitation_probability?d.hourly.precipitation_probability[new Date().getHours()]||0:0;
+    const rain=d.current.precipitation||0;
+    const icons={0:'sunny',1:'partly',2:'cloudy',3:'overcast',45:'fog',48:'fog',51:'drizzle',53:'drizzle',55:'rain',61:'rain',63:'rain',65:'rain',71:'snow',73:'snow',75:'snow',80:'shower',81:'shower',82:'storm',95:'storm',96:'storm',99:'storm'};
+    const emojs={sunny:'sunny',partly:'partly',cloudy:'cloudy',overcast:'overcast',fog:'fog',drizzle:'drizzle',rain:'rain',snow:'snow',shower:'shower',storm:'storm'};
+    const iconMap={'sunny':'sun','partly':'sun_cloud','cloudy':'cloud','overcast':'clouds','fog':'fog','drizzle':'light_rain','rain':'rain','snow':'snow','shower':'shower','storm':'lightning'};
+    const descs={0:'Ensoleille',1:'Peu nuageux',2:'Partiellement nuageux',3:'Nuageux',45:'Brouillard',48:'Brouillard givrant',51:'Bruine',53:'Bruine',55:'Bruine forte',61:'Pluie legere',63:'Pluie moderee',65:'Forte pluie',71:'Neige legere',73:'Neige',75:'Neige forte',80:'Averses',81:'Averses',82:'Averses fortes',95:'Orage',96:'Orage',99:'Orage violent'};
+    const emojiMap={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+    icon.textContent=emojiMap[code]||'🌡';
+    temp.textContent=t+'°C';
+    desc.textContent=descs[code]||'Variable';
+    extra.textContent='Vent '+wind+' km/h · Pluie '+rainProb+'%';
+    const card=document.getElementById('meteo-card');
+    const content=document.getElementById('meteo-content');
+    if(card&&content){
+      const old=content.querySelector('.meteo-conseil');if(old)old.remove();
+      const conseil=document.createElement('div');
+      conseil.className='meteo-conseil';
+      if(rain>0||code>=51){
+        card.style.borderTop='3px solid var(--red)';
+        conseil.style.cssText='font-size:10px;color:var(--red);font-weight:700;margin-top:8px;text-align:center';
+        conseil.textContent='Conditions defavorables';
+      } else if(code<=2&&rainProb<30){
+        card.style.borderTop='3px solid var(--green)';
+        conseil.style.cssText='font-size:10px;color:var(--green);font-weight:700;margin-top:8px;text-align:center';
+        conseil.textContent='Ideal pour nettoyage !';
+      } else {
+        card.style.borderTop='3px solid var(--orange)';
+        conseil.style.cssText='font-size:10px;color:var(--orange);font-weight:700;margin-top:8px;text-align:center';
+        conseil.textContent='Conditions variables';
+      }
+      content.appendChild(conseil);
+    }
+  }catch(e){
+    if(icon)icon.textContent='?';
+    if(desc)desc.textContent='Non disponible';
+    if(temp)temp.textContent='--';
+  }
+}
+
+function setObjectifMensuel(){
+  const actuel=state.settings.objectifMensuel||5000;
+  const val=prompt('Objectif mensuel (CHF) :',actuel);
+  if(val&&!isNaN(parseInt(val))){
+    state.settings.objectifMensuel=parseInt(val);
+    saveStorage('settings');
+    render();
+  }
+}
+
 function initChart(){
   const ctx=document.getElementById('revenueChart');if(!ctx)return;
   chartInstance=new Chart(ctx,{type:'bar',data:{labels:['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'],datasets:[{data:state.monthly,backgroundColor:state.monthly.map(v=>v>0?'rgba(14,165,233,0.85)':'rgba(14,165,233,0.15)'),borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'CHF '+c.raw.toLocaleString()}}},scales:{x:{grid:{display:false},ticks:{font:{size:10},color:'#94A3B8'}},y:{grid:{color:'#F1F5F9'},ticks:{font:{size:10},color:'#94A3B8',callback:v=>v>0?'CHF '+v:''}}}}});
@@ -644,18 +869,69 @@ function initChart(){
 
 // CLIENTS
 function renderClients(){
+  const selMode=state.clientSelMode||false;
+  const selIds=state.clientSelIds||new Set();
+  const selCount=selIds.size;
+  const search=(state.clientSearch||'').toLowerCase();
+  const filteredClients=search
+    ?state.clients.filter(c=>c.nom.toLowerCase().includes(search)||(c.tel||'').includes(search)||(c.ville||'').toLowerCase().includes(search))
+    :state.clients;
+
   return `
   <div class="page-header">
-    <div><div class="page-title">Clients</div><div class="page-sub">${state.clients.length} client${state.clients.length>1?'s':''} enregistré${state.clients.length>1?'s':''}</div></div>
-    <button class="btn btn-primary" onclick="openAddClient()">+ Nouveau client</button>
+    <div><div class="page-title">Clients</div><div class="page-sub">${state.clients.length} client${state.clients.length>1?'s':''} · ${filteredClients.length} affiché${filteredClients.length>1?'s':''}</div></div>
+    <div class="hdr-actions">
+      ${selMode
+        ?`<button class="btn btn-secondary btn-sm" onclick="toggleClientSelAll()">
+            ${selCount===filteredClients.length?'☑ Tout désélectionner':'☐ Tout sélectionner'}
+          </button>
+          <button class="btn btn-sm" style="background:var(--red);color:white;font-weight:700" onclick="supprimerClientsSelectionnes()" ${selCount===0?'disabled':''}>
+            🗑 Supprimer (${selCount})
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="state.clientSelMode=false;state.clientSelIds=new Set();render()">Annuler</button>`
+        :`<button class="btn btn-secondary btn-sm" onclick="state.clientSelMode=true;state.clientSelIds=new Set();render()">☐ Sélectionner</button>
+          <label class="btn btn-secondary btn-sm" style="cursor:pointer">
+            📇 Importer VCF
+            <input type="file" accept=".vcf" style="display:none" onchange="importerVCF(this)">
+          </label>
+          <button class="btn btn-primary" onclick="openAddClient()">+ Nouveau client</button>`}
+    </div>
   </div>
+
+  <!-- BARRE RECHERCHE + FILTRES RAPIDES -->
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:200px;position:relative">
+      <input id="client-search" value="${state.clientSearch||''}" oninput="state.clientSearch=this.value;render()" placeholder="🔍 Rechercher par nom, tél, ville..." style="width:100%;padding-left:14px">
+    </div>
+    ${selMode?`
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="selectionnerPar('sans-adresse')" title="Sans adresse">📍 Sans adresse</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectionnerPar('sans-email')" title="Sans email">📧 Sans email</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectionnerPar('sans-chantier')" title="Sans chantier">🏗 Jamais client</button>
+      <button class="btn btn-secondary btn-sm" onclick="selectionnerPar('recherche')" title="Sélectionner les résultats affichés">☐ Sélectionner résultats</button>
+    </div>`:''}
+  </div>
+
   <div style="display:flex;flex-direction:column;gap:12px">
-    ${state.clients.map(c=>{
+    ${filteredClients.length===0?`<div class="card" style="text-align:center;padding:30px;color:var(--gray)">Aucun client trouvé pour "${state.clientSearch}"</div>`:''}
+    ${filteredClients.map(c=>{
       const specs=c.specs||{};
       const hasSpecs=specs.produits||specs.acces||specs.attention||specs.divers;
-      return`<div class="card" style="padding:0;overflow:hidden">
+      const isSel=selIds.has(c.id);
+      return`
+      <div class="swipe-container" id="swipe-wrap-client-${c.id}" style="position:relative;overflow:hidden;border-radius:14px">
+        <div class="swipe-bg-del" style="position:absolute;inset:0;background:linear-gradient(135deg,#EF4444,#DC2626);display:flex;align-items:center;justify-content:flex-end;padding-right:24px;border-radius:14px;opacity:0;transition:opacity 0.2s;pointer-events:none">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:white">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+            <span style="font-size:11px;font-weight:700">Supprimer</span>
+          </div>
+        </div>
+        <div class="${selMode?'':'swipe-card'}" data-type="client" data-id="${c.id}" style="touch-action:pan-y;position:relative;${selMode?'':'cursor:grab'}">
+        <div class="card" onclick="${selMode?`toggleClientSel(${c.id},!state.clientSelIds.has(${c.id}));render()`:''}" style="padding:0;overflow:hidden;margin:0;border-radius:14px;${isSel?'border:2px solid var(--blue);background:#EFF6FF;':''}${selMode?'cursor:pointer':''}">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:12px">
+            ${selMode?`<div style="width:22px;height:22px;border-radius:5px;border:2px solid ${isSel?'var(--blue)':'var(--border)'};background:${isSel?'var(--blue)':'white'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s">
+              ${isSel?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div>`:''}
             <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,${c.type==='Particulier'?'var(--blue),var(--blue2)':'var(--navy),var(--navy3)'});display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;flex-shrink:0">${c.nom.charAt(0)}</div>
             <div>
               <div style="display:flex;align-items:center;gap:8px">
@@ -695,8 +971,100 @@ function renderClients(){
             <button class="btn btn-primary btn-sm" onclick="openEditClient(${c.id})">✏️ Modifier les spécifications</button>
           </div>
         </div>
+        </div>
+        </div>
       </div>`;}).join('')}
   </div>`;
+}
+function selectionnerPar(critere){
+  if(!state.clientSelIds)state.clientSelIds=new Set();
+  const search=(state.clientSearch||'').toLowerCase();
+  const filtered=search
+    ?state.clients.filter(c=>c.nom.toLowerCase().includes(search)||(c.tel||'').includes(search)||(c.ville||'').toLowerCase().includes(search))
+    :state.clients;
+  let toSelect=[];
+  if(critere==='sans-adresse') toSelect=state.clients.filter(c=>!c.adresse&&!c.ville);
+  else if(critere==='sans-email') toSelect=state.clients.filter(c=>!c.email);
+  else if(critere==='sans-chantier') toSelect=state.clients.filter(c=>!c.chantiers||c.chantiers===0);
+  else if(critere==='recherche') toSelect=filtered;
+  toSelect.forEach(c=>state.clientSelIds.add(c.id));
+  render();
+  showToast(`☐ ${state.clientSelIds.size} client${state.clientSelIds.size>1?'s':''} sélectionné${state.clientSelIds.size>1?'s':''}`);
+}
+
+function toggleClientSel(id, checked){
+  if(!state.clientSelIds)state.clientSelIds=new Set();
+  if(checked)state.clientSelIds.add(id);
+  else state.clientSelIds.delete(id);
+}
+
+function toggleClientSelAll(){
+  if(!state.clientSelIds)state.clientSelIds=new Set();
+  const search=(state.clientSearch||'').toLowerCase();
+  const filtered=search
+    ?state.clients.filter(c=>c.nom.toLowerCase().includes(search)||(c.tel||'').includes(search)||(c.ville||'').toLowerCase().includes(search))
+    :state.clients;
+  if(state.clientSelIds.size===filtered.length){
+    state.clientSelIds=new Set();
+  } else {
+    state.clientSelIds=new Set(filtered.map(c=>c.id));
+  }
+  render();
+}
+
+function supprimerClientsSelectionnes(){
+  const ids=state.clientSelIds||new Set();
+  if(ids.size===0)return;
+  if(!confirm(`Supprimer ${ids.size} client${ids.size>1?'s':''} ? Cette action est irréversible.`))return;
+  state.clients=state.clients.filter(c=>!ids.has(c.id));
+  saveStorage('clients');
+  state.clientSelMode=false;
+  state.clientSelIds=new Set();
+  state.clientSearch='';
+  render();
+  showToast('🗑 '+ids.size+' client'+( ids.size>1?'s':'')+' supprimé'+( ids.size>1?'s':'')+'!');
+}
+
+function importerVCF(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const content=e.target.result;
+    const vcards=content.split('BEGIN:VCARD');
+    const skip=['A Téléphone','Mes contacts','Achat ','Garanti ','Frigo ','Ikea','Migros','Coop','SBB','CFF'];
+    const existingTels=new Set(state.clients.map(c=>(c.tel||'').replace(/\s/g,'')));
+    let added=0, skipped=0;
+    vcards.slice(1).forEach(vcard=>{
+      const fnM=vcard.match(/FN:(.+?)[\r\n]/);
+      const telM=vcard.match(/TEL[^:]*:(.+?)[\r\n]/);
+      const emailM=vcard.match(/EMAIL[^:]*:(.+?)[\r\n]/);
+      const orgM=vcard.match(/ORG:(.+?)[\r\n]/);
+      if(!fnM)return;
+      const nom=fnM[1].trim();
+      if(!nom||skip.some(s=>nom.includes(s)))return;
+      const tel=(telM?telM[1].trim():'').replace(/[^\d+\s]/g,'').trim();
+      const email=emailM?emailM[1].trim():'';
+      const org=orgM?orgM[1].trim().replace(/;+$/,''):'';
+      // Éviter doublons par numéro de téléphone
+      const telClean=tel.replace(/\s/g,'');
+      if(telClean&&existingTels.has(telClean)){skipped++;return;}
+      if(telClean)existingTels.add(telClean);
+      state.clients.push({
+        id:state.nextClientId++,
+        nom,tel,email,
+        adresse:'',ville:'',
+        type:org?'Entreprise':'Particulier',
+        chantiers:0,specs:{}
+      });
+      added++;
+    });
+    saveStorage('clients');
+    render();
+    showToast('✅ '+added+' contacts importés ! ('+skipped+' doublons ignorés)');
+  };
+  reader.readAsText(file,'utf-8');
+  input.value='';
 }
 
 function toggleClientSpecs(id){
@@ -1258,56 +1626,95 @@ function renderChantiers(){
               Briefing WA
             </button>`:''}
             <button class="btn btn-ai btn-sm" onclick="aiChanEmail(${c.id})">📧 Email</button>
+            <button class="btn btn-secondary btn-sm" onclick="ouvrirPhotos(${c.id})">📸 Photos</button>
             ${c.statut!=='Terminé'?`<button class="btn btn-secondary btn-sm" onclick="advanceChan(${c.id})">→ Avancer</button>`:''}
           </div>
         </div>
       </div>
     </div>
-    </div>`;}).join('')}</div>
-  <script>
-  // Swipe to delete
-  (function(){
-    document.querySelectorAll('.swipe-card').forEach(card=>{
-      const id=parseInt(card.dataset.id);
-      const wrap=document.getElementById('swipe-wrap-'+id);
-      const bg=wrap?.querySelector('.swipe-bg');
-      let startX=0,startY=0,dx=0,dragging=false,threshold=80;
-      function onStart(x,y){startX=x;startY=y;dx=0;dragging=true;card.style.transition='none';}
-      function onMove(x,y){
-        if(!dragging)return;
-        dx=Math.min(0,x-startX);
-        const absDy=Math.abs(y-startY);
-        if(absDy>Math.abs(dx)*1.5){dragging=false;card.style.transform='';card.style.transition='transform 0.25s ease';if(bg)bg.style.opacity=0;return;}
-        card.style.transform='translateX('+dx+'px)';
-        if(bg)bg.style.opacity=Math.min(1,Math.abs(dx)/threshold);
-      }
-      function onEnd(){
-        if(!dragging)return;dragging=false;
-        card.style.transition='transform 0.25s ease';
-        if(Math.abs(dx)>=threshold){
-          card.style.transform='translateX(-100%)';
-          if(bg){bg.style.opacity=1;}
-          setTimeout(()=>{
-            if(confirm('Supprimer le chantier ?')){
-              state.chantiers=state.chantiers.filter(x=>x.id!==id);
-              saveStorage('chantiers');render();
-              showToast('🗑 Chantier supprimé');
-            }else{card.style.transform='';if(bg)bg.style.opacity=0;}
-          },200);
-        }else{card.style.transform='';if(bg)bg.style.opacity=0;}
-      }
-      // Touch
-      card.addEventListener('touchstart',e=>{const t=e.touches[0];onStart(t.clientX,t.clientY);},{passive:true});
-      card.addEventListener('touchmove',e=>{const t=e.touches[0];onMove(t.clientX,t.clientY);},{passive:true});
-      card.addEventListener('touchend',onEnd);
-      // Mouse (desktop)
-      card.addEventListener('mousedown',e=>{onStart(e.clientX,e.clientY);card.style.cursor='grabbing';});
-      document.addEventListener('mousemove',e=>{if(dragging)onMove(e.clientX,e.clientY);});
-      document.addEventListener('mouseup',e=>{if(dragging){onEnd();card.style.cursor='grab';}});
-    });
-  })();
-  <\/script>`;
+    </div>
+    </div>`;}).join('')}</div>`;
 }
+function ouvrirPhotos(chantierId){
+  const c=state.chantiers.find(x=>x.id===chantierId);
+  if(!c)return;
+  const photos=c.photos||{avant:[],apres:[]};
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">📸 Photos — ${c.client}</div><div style="font-size:12px;color:var(--gray)">${c.type} · ${formatDate(c.date)}</div></div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="grid2" style="gap:16px">
+      <div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--gray)">AVANT</div>
+        <div id="photos-avant" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          ${(photos.avant||[]).map((p,i)=>`<div style="position:relative"><img src="${p}" style="width:90px;height:90px;object-fit:cover;border-radius:9px;border:2px solid var(--border)"><button onclick="supprimerPhoto(${chantierId},'avant',${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0">✕</button></div>`).join('')}
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:2px dashed var(--border);border-radius:9px;padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Ajouter photo AVANT
+          <input type="file" accept="image/*" multiple style="display:none" onchange="ajouterPhoto(${chantierId},'avant',this)">
+        </label>
+      </div>
+      <div>
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:var(--blue)">APRÈS</div>
+        <div id="photos-apres" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+          ${(photos.apres||[]).map((p,i)=>`<div style="position:relative"><img src="${p}" style="width:90px;height:90px;object-fit:cover;border-radius:9px;border:2px solid var(--blue)"><button onclick="supprimerPhoto(${chantierId},'apres',${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:white;border:none;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0">✕</button></div>`).join('')}
+        </div>
+        <label style="display:inline-flex;align-items:center;gap:6px;background:#EFF6FF;border:2px dashed var(--blue);border-radius:9px;padding:10px 14px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blue)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Ajouter photo APRÈS
+          <input type="file" accept="image/*" multiple style="display:none" onchange="ajouterPhoto(${chantierId},'apres',this)">
+        </label>
+      </div>
+    </div>
+    <div style="background:var(--bg);border-radius:9px;padding:10px 13px;font-size:11px;color:var(--gray);margin-top:14px">
+      💡 Les photos sont sauvegardées dans l'app. Vous pouvez les utiliser pour montrer votre travail aux clients !
+    </div>`;
+  openModal();
+}
+
+function ajouterPhoto(chantierId,type,input){
+  const c=state.chantiers.find(x=>x.id===chantierId);
+  if(!c)return;
+  if(!c.photos)c.photos={avant:[],apres:[]};
+  const files=Array.from(input.files);
+  let loaded=0;
+  files.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      // Resize to max 800px for storage
+      const img=new Image();
+      img.onload=()=>{
+        const canvas=document.createElement('canvas');
+        const max=800;
+        let w=img.width,h=img.height;
+        if(w>max){h=Math.round(h*max/w);w=max;}
+        if(h>max){w=Math.round(w*max/h);h=max;}
+        canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        c.photos[type].push(canvas.toDataURL('image/jpeg',0.75));
+        loaded++;
+        if(loaded===files.length){
+          saveStorage('chantiers');
+          ouvrirPhotos(chantierId);
+          showToast('📸 '+files.length+' photo'+( files.length>1?'s':'')+' ajoutée'+( files.length>1?'s':'')+'!');
+        }
+      };
+      img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function supprimerPhoto(chantierId,type,index){
+  const c=state.chantiers.find(x=>x.id===chantierId);
+  if(!c||!c.photos)return;
+  c.photos[type].splice(index,1);
+  saveStorage('chantiers');
+  ouvrirPhotos(chantierId);
+}
+
 function toggleChanSpecs(id){
   const el=document.getElementById(id);
   if(el)el.style.display=el.style.display==='none'?'grid':'none';
@@ -2033,7 +2440,7 @@ function rappelEmail(id){
   const d=state.devisLog.find(x=>x.id===id);
   const sujet=`Rappel : votre devis ${d.num} — Bowen HydroClean`;
   const corps=`Bonjour ${d.client.split(' ')[0]},\n\nNous revenons vers vous concernant notre devis ${d.num} du ${new Date(d.dateEnvoi).toLocaleDateString('fr-CH')} pour CHF ${d.ttc.toFixed(2)} TTC.\n\nAvez-vous eu l'occasion d'en prendre connaissance ? Nous restons disponibles pour toute question ou ajustement.\n\nCordialement,\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`;
-  window.location.href='mailto:'+(d.email||'')+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
+  try{window.location.href='mailto:'+(d.email||'')+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);}catch(_e){showToast('Ouvrez votre application email');}
 }
 
 function saveDevisToLog(client,ville,tel,email,items,ht,ttc){
@@ -2143,7 +2550,15 @@ function downloadPDF(){
   doc.setFillColor(11,31,58);doc.rect(0,277,210,20,'F');
   doc.setTextColor(148,163,184);doc.setFont('helvetica','normal');doc.setFontSize(7.5);
   doc.text('Bowen HydroClean · Suisse romande · www.bowenhydroclean.ch · info@bowenhydroclean.ch',105,287,{align:'center'});
-  doc.save(`Devis-${num}-${client.replace(/\s+/g,'-')}.pdf`);
+  try{
+    const blob=doc.output('blob');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='Devis-'+num+'-'+client.replace(/\s+/g,'-')+'.pdf';
+    a.style.display='none';document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},500);
+    showToast('Devis PDF telechargé !');
+  }catch(e){doc.save('Devis-'+num+'.pdf');}
 }
 
 // ══════════════════════════════════════════════════
@@ -2357,7 +2772,7 @@ function envoyerFactureEmail(id){
   downloadInvoicePDF(id);
   // 2. Ouvrir le client mail après un court délai
   setTimeout(()=>{
-    window.location.href='mailto:'+(client.email||'')+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
+    try{window.location.href='mailto:'+(client.email||'')+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);}catch(_e){showToast('Ouvrez votre application email');}
     // Toast message
     const toast=document.createElement('div');
     toast.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;box-shadow:0 8px 24px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px';
@@ -2534,24 +2949,53 @@ function getQRDataUrl(f){
 }
 
 function downloadInvoicePDF(id){
-  if(!window.jspdf){alert('PDF en cours de chargement.');return;}
+  if(!window.jspdf){
+    showToast('Librairie PDF en cours de chargement, réessayez dans 3 secondes...');
+    setTimeout(()=>downloadInvoicePDF(id),3000);
+    return;
+  }
   const f=state.factures.find(x=>x.id===id);
-  // Generate QR code first, then build PDF
-  getQRDataUrl(f).then(qrUrl=>buildInvoicePDF(id,qrUrl));
+  if(!f){alert('Facture introuvable');return;}
+  try{
+    getQRDataUrl(f).then(qrUrl=>{
+      try{
+        buildInvoicePDF(id,qrUrl);
+      }catch(e){
+        console.error('buildInvoicePDF error:',e);
+        alert('Erreur PDF: '+e.message+'\n\nVérifiez la console pour plus de détails.');
+      }
+    }).catch(e=>{
+      console.error('QR error:',e);
+      // Try without QR
+      try{buildInvoicePDF(id,null);}catch(e2){alert('Erreur PDF: '+e2.message);}
+    });
+  }catch(e){
+    console.error('downloadInvoicePDF error:',e);
+    alert('Erreur: '+e.message);
+  }
 }
 
 function buildInvoicePDF(id,qrUrl){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF('p','mm','a4');
   const f=state.factures.find(x=>x.id===id);
+  if(!f){showToast('Facture introuvable');return;}
   const s=state.settings;
   const client=state.clients.find(x=>x.nom===f.client)||{};
   const chan=state.chantiers.find(x=>x.id===f.chantierId)||{};
+  // Defensive fallbacks for missing fields
+  const montantHT=f.montantHT||f.montant||0;
+  const ttc=f.ttc||(montantHT*1.081)||0;
+  const fType=f.type||chan.type||'Nettoyage haute pression';
+  const fSurface=f.surface||chan.surface||0;
+  const fAdresse=f.adresse||chan.adresse||client.adresse||'';
+  const fVille=f.ville||chan.ville||client.ville||'';
+  const fDateEcheance=f.dateEcheance||f.dateFacture||new Date().toISOString().split('T')[0];
   // Employees who worked on this chantier
   const empList=(chan.employes||[]).map(eid=>state.employes.find(e=>e.id===eid)).filter(Boolean);
   // Hours logged for this chantier
   const hChan=state.heures.filter(h=>h.chantierId===f.chantierId);
-  const totalH=hChan.length>0?hChan.reduce((s,h)=>s+h.heures,0):estimerDureeH(f.type,f.surface);
+  const totalH=hChan.length>0?hChan.reduce((s,h)=>s+h.heures,0):estimerDureeH(fType,fSurface);
   const dureeStr=totalH<1?Math.round(totalH*60)+' min':(Math.floor(totalH)+'h'+(totalH%1?'30':''));
 
   // ── HEADER ─────────────────────────────────────────────────────────
@@ -2577,9 +3021,9 @@ function buildInvoicePDF(id,qrUrl){
   doc.setFillColor(224,242,254);doc.rect(0,52,210,7,'F');
   doc.setTextColor(14,31,58);doc.setFont('helvetica','bold');doc.setFontSize(7.5);
   doc.text('Date de facture : '+new Date(f.dateFacture).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),14,57);
-  doc.text('\u00c9ch\u00e9ance : '+new Date(f.dateEcheance).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),105,57,{align:'center'});
+  doc.text('\u00c9ch\u00e9ance : '+new Date(fDateEcheance).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),105,57,{align:'center'});
   doc.setTextColor(200,0,0);
-  doc.text(f.statut==='pay\u00e9e'?'PAY\u00c9E':'\u00c0 PAYER AVANT '+new Date(f.dateEcheance).toLocaleDateString('fr-CH'),196,57,{align:'right'});
+  doc.text(f.statut==='pay\u00e9e'?'PAY\u00c9E':'\u00c0 PAYER AVANT '+new Date(fDateEcheance).toLocaleDateString('fr-CH'),196,57,{align:'right'});
 
   // ── CLIENT & COMPANY ADDRESS BLOCKS ────────────────────────────────
   let y=70;
@@ -2631,11 +3075,11 @@ function buildInvoicePDF(id,qrUrl){
   // Main prestation
   doc.setFillColor(240,249,255);doc.rect(14,y,182,10,'F');
   doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(9);
-  doc.text(f.type||'Nettoyage haute pression',18,y+7);
-  doc.text((f.surface||0)+' m\u00b2',105,y+7);
-  const prixM2=f.surface&&f.montantHT?Math.round(f.montantHT/f.surface):0;
+  doc.text(fType||'Nettoyage haute pression',18,y+7);
+  doc.text((fSurface||0)+' m\u00b2',105,y+7);
+  const prixM2=fSurface&&montantHT?Math.round(montantHT/(fSurface||1)):0;
   doc.text(prixM2?'CHF '+prixM2:'—',143,y+7);
-  doc.setFont('helvetica','bold');doc.text('CHF '+f.montantHT.toFixed(2),196,y+7,{align:'right'});
+  doc.setFont('helvetica','bold');doc.text('CHF '+montantHT.toFixed(2),196,y+7,{align:'right'});
   y+=11;
   // Notes if any
   if(chan.notes){
@@ -2651,10 +3095,10 @@ function buildInvoicePDF(id,qrUrl){
   // ── TOTAL BLOCK ────────────────────────────────────────────────────
   doc.setFillColor(11,31,58);doc.roundedRect(120,y,76,38,3,3,'F');
   doc.setTextColor(148,163,184);doc.setFont('helvetica','normal');doc.setFontSize(9);
-  doc.text('Sous-total HT',124,y+9);doc.setTextColor(255,255,255);doc.text('CHF '+f.montantHT.toFixed(2),193,y+9,{align:'right'});
+  doc.text('Sous-total HT',124,y+9);doc.setTextColor(255,255,255);doc.text('CHF '+montantHT.toFixed(2),193,y+9,{align:'right'});
   doc.setTextColor(148,163,184);doc.text('TVA 8.1%',124,y+18);doc.setTextColor(255,255,255);doc.text('CHF '+f.tva.toFixed(2),193,y+18,{align:'right'});
   doc.setDrawColor(56,100,130);doc.setLineWidth(0.3);doc.line(124,y+23,193,y+23);
-  doc.setTextColor(0,212,255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('CHF '+f.ttc.toFixed(2),193,y+33,{align:'right'});
+  doc.setTextColor(0,212,255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('CHF '+ttc.toFixed(2),193,y+33,{align:'right'});
   doc.setTextColor(255,255,255);doc.setFontSize(9.5);doc.text('TOTAL TTC',124,y+33);
   // Left of total: payment notice
   doc.setTextColor(15,23,42);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('Modalit\u00e9s de paiement',14,y+8);
@@ -2663,7 +3107,7 @@ function buildInvoicePDF(id,qrUrl){
   doc.text('IBAN : '+(s.iban||''),14,y+21);
   doc.text('Banque : '+(s.banque||'')+(s.bic?' \u2014 BIC : '+s.bic:''),14,y+27);
   doc.setTextColor(200,0,0);doc.setFont('helvetica','bold');doc.setFontSize(8);
-  doc.text('\u00c9ch\u00e9ance : '+new Date(f.dateEcheance).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),14,y+34);
+  doc.text('\u00c9ch\u00e9ance : '+new Date(fDateEcheance).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),14,y+34);
   y+=46;
 
   // ── THANK YOU ──────────────────────────────────────────────────────
@@ -2700,15 +3144,26 @@ function buildInvoicePDF(id,qrUrl){
   // Montant — côté droit
   doc.setTextColor(100,116,139);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('Montant',148,qrY2+26);
   doc.setTextColor(11,31,58);doc.setFontSize(17);doc.setFont('helvetica','bold');
-  doc.text('CHF '+f.ttc.toFixed(2),148,qrY2+38);
+  doc.text('CHF '+ttc.toFixed(2),148,qrY2+38);
   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100,100,100);
   doc.text('R\u00e9f. : '+f.num,148,qrY2+46);
-  doc.text('\u00c9ch. : '+new Date(f.dateEcheance).toLocaleDateString('fr-CH'),148,qrY2+53);
+  doc.text('\u00c9ch. : '+new Date(fDateEcheance).toLocaleDateString('fr-CH'),148,qrY2+53);
   // Footer strip
   doc.setFillColor(11,31,58);doc.rect(0,qrY2+qrH,210,6,'F');
   doc.setTextColor(148,163,184);doc.setFont('helvetica','normal');doc.setFontSize(7);
   doc.text('Bowen HydroClean \u00b7 '+(s.adresse||'')+', '+(s.npa||'')+' \u00b7 www.bowenhydroclean.ch \u00b7 '+(s.tva||''),105,qrY2+qrH+4,{align:'center'});
-  doc.save(`${f.num}-${f.client.replace(/\s+/g,'-')}.pdf`);
+  // Safari-compatible download
+  try{
+    const blob=doc.output('blob');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=(f.num||'facture')+'-'+(f.client||'client').replace(/\s+/g,'-')+'.pdf';
+    a.style.display='none';document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},500);
+    showToast('PDF telechargé !');
+  }catch(e){
+    doc.save((f.num||'facture')+'.pdf');
+  }
 }
 
 // Helper for estimated hours as number
@@ -3029,10 +3484,191 @@ function downloadRapportPDF(){
   doc.setTextColor(148,163,184);doc.setFont('helvetica','normal');doc.setFontSize(7);
   doc.text('Bowen HydroClean \u00b7 '+( s.adresse||'')+', '+(s.npa||'')+' \u00b7 www.bowenhydroclean.ch',105,292,{align:'center'});
 
-  doc.save('Rapport-BHC-'+(moisNom.replace(' ','-'))+'.pdf');
+  try{
+    const blob=doc.output('blob');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='Rapport-BHC-'+moisNom.replace(' ','-')+'.pdf';
+    a.style.display='none';document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},500);
+    showToast('Rapport PDF telechargé !');
+  }catch(e){doc.save('Rapport-BHC.pdf');}
 }
 
-// Toast helper
+// ══════════════════════════════════════════════════════════
+// 👆 SWIPE TO DELETE — Global
+// ══════════════════════════════════════════════════════════
+let _swipeDragging=false;
+
+function initSwipe(){
+  // Nettoyer les anciens listeners globaux
+  document.removeEventListener('mousemove',_swipeMouseMove);
+  document.removeEventListener('mouseup',_swipeMouseUp);
+
+  document.querySelectorAll('.swipe-card').forEach(card=>{
+    if(card._swipeInit)return; // éviter double init
+    card._swipeInit=true;
+    const id=parseInt(card.dataset.id);
+    const type=card.dataset.type||'chantier';
+    const wrap=card.closest('.swipe-container');
+    const bg=wrap?.querySelector('.swipe-bg,.swipe-bg-del');
+    let startX=0,startY=0,dx=0,dragging=false;
+    const threshold=90;
+
+    function onStart(x,y){
+      startX=x;startY=y;dx=0;dragging=true;_swipeDragging=true;
+      card.style.transition='none';
+    }
+    function onMove(x,y){
+      if(!dragging)return;
+      dx=Math.min(0,x-startX);
+      const absDy=Math.abs(y-startY);
+      if(absDy>Math.abs(dx)*2){
+        dragging=false;_swipeDragging=false;
+        card.style.transform='';
+        card.style.transition='transform 0.25s ease';
+        if(bg)bg.style.opacity=0;
+        return;
+      }
+      card.style.transform='translateX('+dx+'px)';
+      if(bg)bg.style.opacity=Math.min(1,Math.abs(dx)/threshold);
+    }
+    function onEnd(){
+      if(!dragging)return;
+      dragging=false;_swipeDragging=false;
+      card.style.transition='transform 0.25s ease';
+      if(Math.abs(dx)>=threshold){
+        card.style.transform='translateX(-110%)';
+        if(bg)bg.style.opacity=1;
+        setTimeout(()=>{
+          const nom=type==='client'
+            ?(state.clients.find(x=>x.id===id)?.nom||'ce client')
+            :(state.chantiers.find(x=>x.id===id)?.client||'ce chantier');
+          if(confirm('Supprimer '+nom+' ?')){
+            if(type==='client'){
+              state.clients=state.clients.filter(x=>x.id!==id);
+              saveStorage('clients');
+            } else {
+              state.chantiers=state.chantiers.filter(x=>x.id!==id);
+              saveStorage('chantiers');
+            }
+            render();
+            showToast('🗑 Supprimé !');
+          } else {
+            card.style.transform='';
+            if(bg)bg.style.opacity=0;
+          }
+        },200);
+      } else {
+        card.style.transform='';
+        if(bg)bg.style.opacity=0;
+      }
+    }
+
+    // Touch events
+    card.addEventListener('touchstart',e=>{
+      const t=e.touches[0];onStart(t.clientX,t.clientY);
+    },{passive:true});
+    card.addEventListener('touchmove',e=>{
+      const t=e.touches[0];onMove(t.clientX,t.clientY);
+    },{passive:true});
+    card.addEventListener('touchend',onEnd);
+
+    // Mouse events
+    card.addEventListener('mousedown',e=>{
+      if(e.button!==0)return;
+      onStart(e.clientX,e.clientY);
+      card.style.cursor='grabbing';
+    });
+    card._swipeOnMove=e=>{if(dragging)onMove(e.clientX,e.clientY);};
+    card._swipeOnUp=e=>{if(dragging){onEnd();card.style.cursor='grab';}};
+    document.addEventListener('mousemove',card._swipeOnMove);
+    document.addEventListener('mouseup',card._swipeOnUp);
+  });
+}
+function _swipeMouseMove(){}
+function _swipeMouseUp(){}
+function reinitialiserApp(){
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">Reinitialiser l'application</div></div>
+      <button class="btn-ghost" onclick="closeModal()">x</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="background:#FEF3C7;border-radius:10px;padding:14px;font-size:13px;color:#92400E;line-height:1.6">
+        Choisissez ce que vous voulez faire :
+      </div>
+      <button class="btn btn-secondary" style="justify-content:flex-start;gap:12px" onclick="viderCache()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+        <div style="text-align:left"><div style="font-weight:700">Vider le cache uniquement</div><div style="font-size:11px;color:var(--gray);font-weight:400">Corrige les erreurs - vos donnees sont conservees</div></div>
+      </button>
+      <button class="btn btn-secondary" style="justify-content:flex-start;gap:12px" onclick="exportData()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <div style="text-align:left"><div style="font-weight:700">Sauvegarder mes donnees</div><div style="font-size:11px;color:var(--gray);font-weight:400">Telecharge un fichier JSON avec toutes vos donnees</div></div>
+      </button>
+      <button class="btn" style="background:#FEE2E2;color:var(--red);justify-content:flex-start;gap:12px" onclick="resetComplet()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        <div style="text-align:left"><div style="font-weight:700">Reset complet</div><div style="font-size:11px;color:var(--red);font-weight:400">Supprime toutes les donnees - irreversible</div></div>
+      </button>
+    </div>`;
+  openModal();
+}
+
+function viderCache(){
+  try{
+    const keysToKeep=['bhc-clients','bhc-chantiers','bhc-monthly','bhc-employes',
+      'bhc-heures','bhc-devislog','bhc-factures','bhc-settings','bhc-campagnes',
+      'bhc-prospection','bhc-theme','bhc-reminder-sent'];
+    const allKeys=[];
+    for(let i=0;i<localStorage.length;i++)allKeys.push(localStorage.key(i));
+    allKeys.filter(k=>!keysToKeep.includes(k)).forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+  closeModal();
+  showToast('Cache vide ! Rechargement...');
+  setTimeout(()=>location.reload(),1000);
+}
+
+function resetComplet(){
+  if(!confirm('ATTENTION : Toutes vos donnees seront supprimees. Continuer ?'))return;
+  if(!confirm('Derniere confirmation - vraiment tout supprimer ?'))return;
+  try{localStorage.clear();}catch(e){}
+  closeModal();
+  showToast('Donnees supprimees. Rechargement...');
+  setTimeout(()=>location.reload(),1000);
+}
+
+function safeMailto(email, subject, body){
+  if(!email){showToast('Pas d\'email disponible');return;}
+  try{
+    const url='mailto:'+encodeURIComponent(email)
+      +'?subject='+encodeURIComponent(subject||'')
+      +'&body='+encodeURIComponent(body||'');
+    window.location.href=url;
+  }catch(e){
+    // Safari fallback - open without body if too long
+    try{
+      window.open('mailto:'+encodeURIComponent(email)+'?subject='+encodeURIComponent(subject||''),'_blank');
+    }catch(e2){
+      showToast('Ouvrez votre application email manuellement');
+    }
+  }
+}
+
+function safeDownload(url, filename){
+  try{
+    const a=document.createElement('a');
+    a.href=url;a.download=filename||'fichier';
+    // Safari needs the element in the DOM
+    a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(()=>{document.body.removeChild(a);},100);
+  }catch(e){
+    window.open(url,'_blank');
+  }
+}
+
+
 function showToast(msg, duration=3500){
   const existing=document.getElementById('bhc-toast');
   if(existing)existing.remove();
@@ -3042,6 +3678,200 @@ function showToast(msg, duration=3500){
   t.textContent=msg;
   document.body.appendChild(t);
   setTimeout(()=>{if(t.parentNode)t.remove();},duration);
+}
+
+
+// ══════════════════════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════════════════════
+function openModal(){
+  const m=document.getElementById('modal');
+  if(m)m.style.display='flex';
+}
+function closeModal(){
+  const m=document.getElementById('modal');
+  if(m){m.style.display='none';document.getElementById('modalContent').innerHTML='';}
+}
+
+// ══════════════════════════════════════════════════════════
+// AI OVERLAY
+// ══════════════════════════════════════════════════════════
+function openAI(title,body,actions){
+  const m=document.getElementById('aiModal');
+  if(!m)return;
+  document.getElementById('aiTitle').textContent=title||'Assistant IA';
+  document.getElementById('aiBody').innerHTML=body||'';
+  document.getElementById('aiActions').innerHTML=actions||'';
+  m.style.display='flex';
+}
+function closeAI(){
+  const m=document.getElementById('aiModal');
+  if(m)m.style.display='none';
+}
+
+async function aiSummary(){
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante — allez dans Factures > Coordonnees bancaires');return;}
+  openAI('Resume intelligent','<div style="text-align:center;padding:20px;color:var(--gray)">Generation en cours...</div>');
+  const now=new Date();const mois=now.getMonth(),annee=now.getFullYear();
+  const ter=state.chantiers.filter(c=>c.statut==='Termine');
+  const revMois=state.chantiers.filter(c=>c.statut==='Termine'&&new Date(c.date).getMonth()===mois&&new Date(c.date).getFullYear()===annee).reduce((s,c)=>s+c.montant,0);
+  const enCours=state.chantiers.filter(c=>c.statut==='En cours').length;
+  const context=`Bowen HydroClean, nettoyage haute pression, Domdidier Suisse. ${state.clients.length} clients, ${enCours} chantiers en cours, CHF ${revMois} ce mois.`;
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:400,messages:[{role:'user',content:`Analyse en 3-4 phrases courtes: ${context}. Donne 2 conseils concrets. Francais, professionnel, sans emojis.`}]})});
+    const data=await resp.json();
+    if(data.error)throw new Error(data.error.message);
+    const txt=data.content?.[0]?.text||'';
+    openAI('Resume intelligent',`<div style="font-size:13px;line-height:1.7;color:var(--text)">${txt.replace(/\n/g,'<br>')}</div>`,
+      `<button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`);
+  }catch(e){closeAI();alert('Erreur IA: '+e.message);}
+}
+
+async function aiClientEmail(clientId){
+  const c=state.clients.find(x=>x.id===clientId);if(!c)return;
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante');return;}
+  openAI('Email client','<div style="text-align:center;padding:20px;color:var(--gray)">Generation...</div>');
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:`Email professionnel et chaleureux pour ${c.nom}, client Bowen HydroClean nettoyage haute pression Suisse. Objet + corps. Francais, sans emojis.`}]})});
+    const data=await resp.json();if(data.error)throw new Error(data.error.message);
+    const txt=data.content?.[0]?.text||'';
+    const email=c.email||'';
+    openAI('Email pour '+c.nom,
+      `<div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--text)">${txt}</div>`,
+      `<button class="btn btn-primary btn-sm" onclick="window.location.href='mailto:${email}?body='+encodeURIComponent(document.getElementById('aiBody').textContent)">Envoyer</button><button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`);
+  }catch(e){closeAI();alert('Erreur IA: '+e.message);}
+}
+
+async function aiChanEmail(chantierId){
+  const c=state.chantiers.find(x=>x.id===chantierId);if(!c)return;
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante');return;}
+  openAI('Email chantier','<div style="text-align:center;padding:20px;color:var(--gray)">Generation...</div>');
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:`Email professionnel pour informer ${c.client} du ${c.type} (${c.surface}m2) prevu le ${c.date} a ${c.ville}. Bowen HydroClean, Suisse. Francais, sans emojis.`}]})});
+    const data=await resp.json();if(data.error)throw new Error(data.error.message);
+    const txt=data.content?.[0]?.text||'';
+    const client=state.clients.find(x=>x.nom===c.client);
+    const email=client?.email||'';
+    openAI('Email chantier '+c.client,
+      `<div style="font-size:13px;line-height:1.7;white-space:pre-wrap;color:var(--text)">${txt}</div>`,
+      `<button class="btn btn-primary btn-sm" onclick="window.location.href='mailto:${email}?body='+encodeURIComponent(document.getElementById('aiBody').textContent)">Envoyer</button><button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`);
+  }catch(e){closeAI();alert('Erreur IA: '+e.message);}
+}
+
+async function aiPrixSuggest(chantierId){
+  const c=state.chantiers.find(x=>x.id===chantierId);if(!c)return;
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante');return;}
+  openAI('Suggestion de prix','<div style="text-align:center;padding:20px;color:var(--gray)">Calcul...</div>');
+  const vitesse={'Terrasse & allee':15,'Facade & mur':10,'Toiture & gouttieres':8}[c.type]||10;
+  const heures=Math.ceil(c.surface/vitesse);
+  const prixEstime=c.surface*(c.type==='Terrasse & allee'?7:c.type==='Facade & mur'?10:12);
+  openAI('Prix suggere',
+    `<div style="font-size:13px;line-height:1.9;color:var(--text)">
+      <div><strong>Surface:</strong> ${c.surface} m2</div>
+      <div><strong>Duree estimee:</strong> ${heures}h</div>
+      <div><strong>Prix suggere:</strong> CHF ${prixEstime}</div>
+      <div style="margin-top:10px;font-size:11px;color:var(--gray)">Basé sur tarif standard BHC</div>
+    </div>`,
+    `<button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`);
+}
+
+function sendWhatsApp(tel,msg){
+  let num=(tel||'').replace(/\s/g,'').replace(/[^\d+]/g,'');
+  if(num.startsWith('0'))num='41'+num.slice(1);
+  if(num.startsWith('+'))num=num.slice(1);
+  if(!num){alert('Numero de telephone manquant');return;}
+  window.open('https://wa.me/'+num+(msg?'?text='+encodeURIComponent(msg):''),'_blank');
+}
+
+function genDevisEmail(devisId){
+  const d=state.devisLog?.find(x=>x.id===devisId);if(!d)return;
+  const client=state.clients.find(x=>x.nom===d.client)||{};
+  const email=client.email||'';
+  const body=`Bonjour ${d.client},\n\nVeuillez trouver ci-joint votre devis Bowen HydroClean.\n\nMontant total: CHF ${d.total}\n\nCordialement,\nBowen HydroClean`;
+  try{window.location.href='mailto:'+(email||'')+'?subject='+encodeURIComponent('Devis Bowen HydroClean')+'&body='+encodeURIComponent(body);}catch(_e){showToast('Ouvrez votre application email');}
+}
+
+// ══════════════════════════════════════════════════════════
+// EMAILS PAGE
+// ══════════════════════════════════════════════════════════
+function renderEmails(){
+  const templates=[
+    {titre:'Confirmation de rendez-vous',icon:'📅',sujet:'Confirmation RDV - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous confirmons votre rendez-vous pour le nettoyage haute pression.\n\nDate: [DATE]\nAdresse: [ADRESSE]\n\nN'hesitez pas a nous contacter pour toute question.\n\nCordialement,\nBowen HydroClean\n079 663 88 16`},
+    {titre:'Rappel de paiement',icon:'💶',sujet:'Rappel - Facture Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous vous rappelons que votre facture du [DATE] d'un montant de CHF [MONTANT] reste a regler.\n\nMerci de proceder au paiement dans les meilleurs delais.\n\nCordialement,\nBowen HydroClean`},
+    {titre:'Remerciement apres intervention',icon:'⭐',sujet:'Merci pour votre confiance - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous vous remercions d'avoir fait appel a Bowen HydroClean.\n\nNous esperons que vous etes satisfait du travail effectue. N'hesitez pas a nous recommander a vos proches.\n\nCordialement,\nBowen HydroClean`},
+    {titre:'Offre saisonniere',icon:'🌿',sujet:'Offre printemps - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nLe printemps est arrive ! C'est le moment ideal pour nettoyer vos terrasses, facades et allees.\n\nBowen HydroClean vous propose un devis gratuit et sans engagement.\n\nContactez-nous au 079 663 88 16.\n\nCordialement,\nBowen HydroClean`},
+    {titre:'Suivi satisfaction',icon:'😊',sujet:'Votre avis nous interesse - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nSuite a notre intervention, nous souhaitons nous assurer de votre satisfaction.\n\nEtes-vous satisfait du resultat ? Avez-vous des remarques ?\n\nVotre retour nous aide a nous ameliorer.\n\nCordialement,\nBowen HydroClean`},
+  ];
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Emails</div><div class="page-sub">5 modeles prets a utiliser</div></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    ${templates.map((t,i)=>`
+      <div class="card" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:28px">${t.icon}</div>
+            <div>
+              <div style="font-weight:700;font-size:14px">${t.titre}</div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px">${t.sujet}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;flex-shrink:0">
+            <button class="btn btn-secondary btn-sm" onclick="voirEmail(${i})">Voir</button>
+            <button class="btn btn-primary btn-sm" onclick="envoyerEmail(${i})">Envoyer</button>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function voirEmail(idx){
+  const templates=[
+    {titre:'Confirmation RDV',icon:'📅',sujet:'Confirmation RDV - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous confirmons votre rendez-vous.\n\nN'hesitez pas a nous contacter.\n\nCordialement,\nBowen HydroClean\n079 663 88 16`},
+    {titre:'Rappel paiement',icon:'💶',sujet:'Rappel - Facture Bowen HydroClean',corps:`Bonjour [Prenom],\n\nVotre facture reste a regler.\n\nMerci.\n\nBowen HydroClean`},
+    {titre:'Remerciement',icon:'⭐',sujet:'Merci - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nMerci pour votre confiance.\n\nBowen HydroClean`},
+    {titre:'Offre saisonniere',icon:'🌿',sujet:'Offre printemps - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nOffre speciale printemps disponible.\n\nBowen HydroClean`},
+    {titre:'Suivi satisfaction',icon:'😊',sujet:'Votre avis - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nEtes-vous satisfait ?\n\nBowen HydroClean`},
+  ];
+  const t=templates[idx];if(!t)return;
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">${t.icon} ${t.titre}</div></div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:4px">SUJET</div>
+    <div style="background:var(--bg);padding:10px 14px;border-radius:9px;font-size:13px;margin-bottom:14px">${t.sujet}</div>
+    <div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:4px">MESSAGE</div>
+    <pre style="background:var(--bg);padding:14px;border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;white-space:pre-wrap;line-height:1.7">${t.corps}</pre>
+    <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
+      <button class="btn btn-primary btn-sm" onclick="envoyerEmail(${idx});closeModal()">Envoyer</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+    </div>`;
+  openModal();
+}
+
+function envoyerEmail(idx){
+  const templates=[
+    {sujet:'Confirmation RDV - Bowen HydroClean',corps:'Bonjour,\n\nNous confirmons votre rendez-vous.\n\nCordialement,\nBowen HydroClean'},
+    {sujet:'Rappel - Facture Bowen HydroClean',corps:'Bonjour,\n\nVotre facture reste a regler.\n\nBowen HydroClean'},
+    {sujet:'Merci - Bowen HydroClean',corps:'Bonjour,\n\nMerci pour votre confiance.\n\nBowen HydroClean'},
+    {sujet:'Offre printemps - Bowen HydroClean',corps:'Bonjour,\n\nOffre speciale disponible.\n\nBowen HydroClean'},
+    {sujet:'Votre avis - Bowen HydroClean',corps:'Bonjour,\n\nEtes-vous satisfait de notre prestation ?\n\nBowen HydroClean'},
+  ];
+  const t=templates[idx];if(!t)return;
+  const emails=state.clients.map(c=>c.email).filter(Boolean).join(',');
+  try{window.location.href='mailto:'+emails+'?subject='+encodeURIComponent(t.sujet)+'&body='+encodeURIComponent(t.corps);}catch(_e){showToast('Ouvrez votre application email');}
 }
 
 // ══════════════════════════════════════════════════════════
@@ -3056,484 +3886,668 @@ const MARKETING_TYPES=[
 ];
 
 function renderMarketing(){
-  const tab=state.marketingTab||'campagnes';
-  const tabBar=`<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-    <button onclick="state.marketingTab='campagnes';render()" class="btn ${tab==='campagnes'?'btn-primary':'btn-secondary'} btn-sm">📣 Campagnes</button>
-    <button onclick="state.marketingTab='nouvelle';render()" class="btn ${tab==='nouvelle'?'btn-primary':'btn-secondary'} btn-sm">+ Nouvelle campagne</button>
-    <button onclick="state.marketingTab='flyer';render()" class="btn ${tab==='flyer'?'btn-primary':'btn-secondary'} btn-sm">🎨 Flyer & Visuels</button>
-    <button onclick="state.marketingTab='suivi';render()" class="btn ${tab==='suivi'?'btn-primary':'btn-secondary'} btn-sm">📊 Suivi & Relances
-      ${(()=>{const r=state.campagnes.filter(c=>c.statut==='envoyée'&&Math.floor((new Date()-new Date(c.dateEnvoi))/864e5)>=(c.delaiRelance||7)).length;return r>0?`<span style="background:var(--red);color:white;border-radius:10px;font-size:9px;font-weight:700;padding:1px 6px;margin-left:4px">${r}</span>`:''})()}
-    </button>
+  const tab=state.mkTab||'campagne';
+  const camps=[...state.campagnes].sort((a,b)=>new Date(b.dateCrea)-new Date(a.dateCrea));
+  const selIds=state.mkSelIds||new Set();
+  const flyerSelIds=state.flyerSelIds||new Set();
+
+  // ─── NAV ─────────────────────────────────────────────────────────────────
+  const nav=`
+  <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    ${[['campagne','Campagne'],['flyer','Flyer'],['prospection','🗺 Prospection']].map(([k,l])=>`
+      <button onclick="state.mkTab='${k}';render()" style="padding:8px 18px;border-radius:20px;border:none;cursor:pointer;font-weight:700;font-size:13px;font-family:'DM Sans',sans-serif;background:${tab===k?'var(--blue)':'white'};color:${tab===k?'white':'var(--gray)'};border:1.5px solid ${tab===k?'var(--blue)':'var(--border)'}">
+        ${l}${k==='campagne'?' ('+camps.length+')':''}
+      </button>`).join('')}
   </div>`;
 
-  if(tab==='nouvelle') return renderNouvelleMarketing(tabBar);
-  if(tab==='flyer') return renderFlyerMarketing(tabBar);
-  if(tab==='suivi') return renderSuiviMarketing(tabBar);
-  return renderCampagnesMarketing(tabBar);
+  if(tab==='flyer') return mkPageFlyer(nav);
+  if(tab==='prospection') return mkPageProspection(nav);
+  return mkPageCampagne(nav,camps,selIds);
 }
 
-function renderCampagnesMarketing(tabBar){
-  const camps=[...state.campagnes].sort((a,b)=>new Date(b.dateEnvoi||b.dateCrea)-new Date(a.dateEnvoi||a.dateCrea));
-  const statColors={brouillon:['#F1F5F9','#64748B','📝'],envoyée:['#E0F2FE','#0284C7','📤'],terminée:['#D1FAE5','#059669','✅']};
-  return `
-  <div class="page-header"><div><div class="page-title">📣 Marketing</div><div class="page-sub">${state.campagnes.length} campagne${state.campagnes.length!==1?'s':''}</div></div></div>
-  ${tabBar}
-  ${camps.length===0?`<div class="card" style="text-align:center;padding:40px">
-    <div style="font-size:40px;margin-bottom:12px">📣</div>
-    <div style="font-weight:700;font-size:16px;margin-bottom:6px">Aucune campagne</div>
-    <div style="color:var(--gray);font-size:13px;margin-bottom:16px">Créez votre première campagne marketing pour fidéliser vos clients</div>
-    <button class="btn btn-primary" onclick="state.marketingTab='nouvelle';render()">+ Créer une campagne</button>
-  </div>`
-  :`<div style="display:flex;flex-direction:column;gap:12px">
-    ${camps.map(c=>{
-      const [bg,fg,ico]=statColors[c.statut]||statColors.brouillon;
-      const envoyes=c.destinataires?.length||0;
-      const repondus=c.destinataires?.filter(d=>d.repondu).length||0;
-      const jours=c.dateEnvoi?Math.floor((new Date()-new Date(c.dateEnvoi))/864e5):0;
-      const aRelancer=c.statut==='envoyée'&&jours>=(c.delaiRelance||7)?c.destinataires?.filter(d=>!d.repondu).length:0;
-      return`<div class="card" style="padding:18px">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
-              <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px">${c.titre}</span>
-              <span style="background:${bg};color:${fg};font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px">${ico} ${c.statut}</span>
-              ${aRelancer>0?`<span style="background:#FEE2E2;color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px">🔔 ${aRelancer} à relancer</span>`:''}
-            </div>
-            <div style="font-size:12px;color:var(--gray);margin-bottom:8px">${MARKETING_TYPES.find(t=>t.id===c.type)?.label||c.type} · Créée le ${new Date(c.dateCrea).toLocaleDateString('fr-CH')}</div>
-            <div style="display:flex;gap:16px;flex-wrap:wrap">
-              <div style="text-align:center;background:var(--bg);border-radius:8px;padding:8px 14px">
-                <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--navy)">${envoyes}</div>
-                <div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase">Envoyés</div>
-              </div>
-              <div style="text-align:center;background:var(--bg);border-radius:8px;padding:8px 14px">
-                <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--green)">${repondus}</div>
-                <div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase">Répondus</div>
-              </div>
-              <div style="text-align:center;background:var(--bg);border-radius:8px;padding:8px 14px">
-                <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${envoyes>0?Math.round(repondus/envoyes*100)>=50?'var(--green)':'var(--orange)':'var(--gray)'}">${envoyes>0?Math.round(repondus/envoyes*100):0}%</div>
-                <div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase">Taux réponse</div>
-              </div>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
-            ${c.statut==='brouillon'?`<button class="btn btn-primary btn-sm" onclick="lancerCampagne(${c.id})">🚀 Lancer</button>`:''}
-            ${c.statut==='envoyée'&&aRelancer>0?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerCampagne(${c.id})">🔔 Relancer (${aRelancer})</button>`:''}
-            <button class="btn btn-secondary btn-sm" onclick="voirDetailsCampagne(${c.id})">👁 Détails</button>
-            <button class="btn btn-danger btn-sm" onclick="supprimerCampagne(${c.id})">🗑</button>
-          </div>
-        </div>
-      </div>`;}).join('')}
-  </div>`}`;
+// ══════════════════════════════════════════════════════════════════════════════
+// PAGE PROSPECTION
+// ══════════════════════════════════════════════════════════════════════════════
+function mkPageProspection(nav){
+  const prosp=state.prospection||{contacts:[],filtre:'restaurant'};
+  const contacts=prosp.contacts||[];
+  const filtres=[
+    ['restaurant','Restaurants','🍽'],['hotel','Hotels','🏨'],['company','Entreprises','🏢'],
+    ['school','Ecoles','🏫'],['place_of_worship','Eglises','⛪'],['sports_centre','Sports','🏋'],
+    ['supermarket','Supermarches','🛒'],['car_dealer','Garages','🚗'],
+  ];
+  const statColors={nouveau:'#0EA5E9',contacte:'#F59E0B',interesse:'#10B981',sans_suite:'#94A3B8'};
+  const statLabels={nouveau:'Nouveau',contacte:'Contacté',interesse:'Intéressé',sans_suite:'Sans suite'};
+
+  const filtresBtns=filtres.map(([k,l,e])=>{
+    const isActive=prosp.filtre===k;
+    return `<button onclick="prospSetFiltre('${k}')" style="display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;border:1.5px solid ${isActive?'rgba(14,165,233,0.9)':'rgba(255,255,255,0.2)'};background:${isActive?'rgba(14,165,233,0.85)':'rgba(255,255,255,0.08)'};color:white;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap">${e} ${l}</button>`;
+  }).join('');
+
+  const listeHtml=contacts.length===0
+    ?'<div style="text-align:center;padding:40px 16px;color:#94A3B8"><div style="font-size:32px;margin-bottom:8px">🗺</div><div style="font-weight:600;font-size:13px">Aucun résultat</div><div style="font-size:11px;margin-top:4px">Lancez une recherche</div></div>'
+    :contacts.map(c=>prospContactCard(c)).join('');
+
+  return `<div style="margin:-22px -22px 0;padding:24px 24px 20px;background:linear-gradient(135deg,#0B1F3A 0%,#0E4D8C 100%);position:relative;overflow:hidden;margin-bottom:16px"><div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(14,165,233,0.1);pointer-events:none"></div>${nav}<div style="color:white;margin-bottom:16px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:2px">Prospection</div><div style="font-size:12px;color:rgba(148,163,184,0.9)">Trouvez de nouveaux clients autour de Domdidier</div></div><div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">${filtresBtns}</div><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);border-radius:10px;padding:7px 14px"><input id="prosp-rayon" type="number" value="${prosp.rayon||10}" min="1" max="50" style="width:50px;background:transparent;border:none;color:white;font-size:15px;font-weight:700;font-family:'Syne',sans-serif;text-align:center;outline:none"><span style="color:rgba(255,255,255,0.7);font-size:12px">km de Domdidier</span></div><button onclick="prospRechercher()" style="background:white;color:#0B1F3A;border:none;border-radius:10px;padding:9px 20px;font-size:13px;font-weight:800;cursor:pointer;font-family:'DM Sans',sans-serif">Rechercher</button><span id="prosp-status" style="font-size:12px;color:rgba(148,163,184,0.9)"></span></div></div><div style="position:relative;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.12);margin-bottom:16px"><div id="prosp-map" style="height:520px;width:100%"></div><div id="prosp-panel" style="position:absolute;top:12px;left:12px;bottom:12px;width:290px;background:white;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.2);display:flex;flex-direction:column;overflow:hidden;z-index:1000"><div style="padding:12px 14px;background:linear-gradient(135deg,#0B1F3A,#0E4D8C);flex-shrink:0;display:flex;align-items:center;justify-content:space-between"><div style="color:white;font-weight:700;font-size:13px">Résultats <span id="prosp-count" style="opacity:0.8">(${contacts.length})</span></div>${contacts.length>0?'<button onclick="prospViderContacts()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;cursor:pointer">Vider</button>':''}</div><div id="prosp-liste" style="flex:1;overflow-y:auto;padding:8px">${listeHtml}</div></div></div>`;
 }
 
-function renderFlyerMarketing(tabBar){
-  const flyerImg=state.flyerImage||null;
-  return `
-  <div class="page-header"><div><div class="page-title">Marketing</div><div class="page-sub">Flyers & Visuels</div></div></div>
-  ${tabBar}
-  <div class="grid2" style="align-items:start;gap:20px">
-
-    <!-- COLONNE GAUCHE : CANVA -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#7C3AED,#DB2777);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-        </div>
-        <div>
-          <div style="font-weight:800;font-size:15px">Designer sur Canva</div>
-          <div style="font-size:12px;color:var(--gray)">Creez des flyers professionnels gratuitement</div>
-        </div>
-      </div>
-
-      <div style="background:linear-gradient(135deg,#7C3AED15,#DB2777,10);">
-      </div>
-
-      <!-- Templates Canva -->
-      <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Templates recommandes</div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
-        ${[
-          {label:'Flyer Nettoyage Haute Pression',url:'https://www.canva.com/search/templates?q=nettoyage+pression+flyer',color:'#0EA5E9',icon:'🔵'},
-          {label:'Flyer Offre Saisonniere',url:'https://www.canva.com/search/templates?q=offre+speciale+flyer',color:'#10B981',icon:'🌿'},
-          {label:'Flyer Avant / Apres',url:'https://www.canva.com/search/templates?q=avant+apres+renovation',color:'#F59E0B',icon:'🔄'},
-          {label:'Story Instagram / Facebook',url:'https://www.canva.com/search/templates?q=nettoyage+story+instagram',color:'#8B5CF6',icon:'📱'},
-        ].map(t=>`
-          <a href="${t.url}" target="_blank" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:10px;border:1.5px solid var(--border);text-decoration:none;transition:all 0.15s;background:white" onmouseover="this.style.borderColor='${t.color}';this.style.background='${t.color}10'" onmouseout="this.style.borderColor='var(--border)';this.style.background='white'">
-            <span style="font-size:20px">${t.icon}</span>
-            <div style="flex:1">
-              <div style="font-weight:600;font-size:13px;color:var(--text)">${t.label}</div>
-              <div style="font-size:11px;color:var(--gray)">Ouvrir dans Canva</div>
-            </div>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${t.color}" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </a>`).join('')}
-      </div>
-
-      <a href="https://www.canva.com" target="_blank" class="btn btn-primary" style="width:100%;justify-content:center;text-decoration:none;margin-top:4px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-        Ouvrir Canva
-      </a>
-
-      <div style="background:var(--bg);border-radius:9px;padding:10px 13px;font-size:11px;color:var(--gray);margin-top:10px;line-height:1.6">
-        <strong>Astuce :</strong> Dans Canva, ajoutez votre logo, vos couleurs bleu marine (#0B1F3A) et bleu clair (#0EA5E9). Exportez en PNG ou PDF, puis uploadez ci-contre.
-      </div>
-    </div>
-
-    <!-- COLONNE DROITE : UPLOAD + ENVOI -->
-    <div class="card">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
-        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        </div>
-        <div>
-          <div style="font-weight:800;font-size:15px">Uploader votre flyer</div>
-          <div style="font-size:12px;color:var(--gray)">PNG, JPG ou PDF depuis Canva</div>
-        </div>
-      </div>
-
-      <!-- Zone upload -->
-      <label id="flyer-upload-zone" style="display:block;border:2.5px dashed var(--border);border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px;background:var(--bg)" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EFF6FF'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--bg)'">
-        <input type="file" accept="image/*,.pdf" style="display:none" onchange="loadFlyerImage(this)">
-        ${flyerImg
-          ? `<img src="${flyerImg}" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain;margin-bottom:10px"><br><span style="font-size:12px;color:var(--blue)">Cliquez pour changer l'image</span>`
-          : `<div style="font-size:36px;margin-bottom:10px">🖼️</div>
-             <div style="font-weight:700;font-size:14px;color:var(--navy);margin-bottom:4px">Deposez votre flyer ici</div>
-             <div style="font-size:12px;color:var(--gray)">ou cliquez pour choisir un fichier</div>
-             <div style="font-size:11px;color:var(--gray2);margin-top:6px">PNG, JPG jusqu'a 10MB</div>`}
-      </label>
-
-      ${flyerImg ? `
-      <!-- Options d'envoi -->
-      <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Envoyer a vos clients</div>
-
-      <div class="form-grid" style="margin-bottom:14px">
-        <div class="fg full"><label>Clients cibles</label>
-          <select id="flyer-dest" style="font-size:13px">
-            <option value="tous">Tous les clients (${state.clients.length})</option>
-            ${state.clients.map(c=>`<option value="${c.id}">${c.nom} — ${c.ville||'—'}</option>`).join('')}
-          </select>
-        </div>
-        <div class="fg full"><label>Message d'accompagnement</label>
-          <textarea id="flyer-msg" style="min-height:70px" placeholder="Ex: Bonjour, voici notre offre speciale de printemps ! N'hesitez pas a nous contacter.">Bonjour, voici notre offre speciale Bowen HydroClean ! Contactez-nous pour un devis gratuit.</textarea>
-        </div>
-      </div>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700;flex:1" onclick="envoyerFlyerWA()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.657-.502-5.184-1.379l-.371-.22-3.862.921.977-3.773-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-          Envoyer par WA
-        </button>
-        <button class="btn btn-primary btn-sm" style="flex:1" onclick="envoyerFlyerEmail()">📧 Envoyer par Email</button>
-        <button class="btn btn-secondary btn-sm" onclick="state.flyerImage=null;saveStorage('settings');render()">🗑 Supprimer</button>
-      </div>
-
-      <div style="background:#D1FAE5;border-radius:9px;padding:10px 13px;font-size:11px;color:#065F46;margin-top:10px">
-        ✅ Flyer pret ! WhatsApp ouvrira une conversation avec votre message et vous pourrez joindre l'image manuellement.
-      </div>
-      ` : `
-      <div style="background:var(--bg);border-radius:9px;padding:14px;font-size:12px;color:var(--gray);text-align:center">
-        <div style="font-size:24px;margin-bottom:6px">👆</div>
-        Uploadez d'abord votre flyer pour acceder aux options d'envoi
-      </div>`}
-    </div>
-  </div>`;
+function prospContactCard(c){
+  const sc={nouveau:'#0EA5E9',contacte:'#F59E0B',interesse:'#10B981',sans_suite:'#94A3B8'};
+  const sl={nouveau:'Nouveau',contacte:'Contacté',interesse:'Intéressé',sans_suite:'Sans suite'};
+  const st=c.statut||'nouveau';
+  const col=sc[st]||'#94A3B8';
+  const lbl=sl[st]||st;
+  const init=c.nom?c.nom.charAt(0).toUpperCase():'?';
+  const adresse=c.adresse||'—';
+  const opts=['nouveau','contacte','interesse','sans_suite'].map(s=>`<option value="${s}"${st===s?' selected':''}>${sl[s]}</option>`).join('');
+  const telBtn=c.tel?`<button onclick="sendWhatsApp('${c.tel}','')" style="background:#25D366;color:white;border:none;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer">WA</button>`:'';
+  const noteHtml=c.note?`<div style="font-size:10px;color:#475569;margin-top:6px;background:#F8FAFC;padding:5px 8px;border-radius:6px;font-style:italic">${c.note}</div>`:'';
+  return `<div style="padding:10px;border:1.5px solid #E2E8F0;border-radius:10px;margin-bottom:7px;border-left:3px solid ${col};background:white"><div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:7px"><div style="width:30px;height:30px;border-radius:7px;background:linear-gradient(135deg,#0B1F3A,#0EA5E9);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:12px;flex-shrink:0">${init}</div><div style="flex:1;min-width:0"><div style="font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nom}</div><div style="font-size:10px;color:#64748B;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${adresse}</div>${c.tel?`<div style="font-size:10px;font-weight:500;margin-top:1px">📞 ${c.tel}</div>`:''}</div><span style="background:${col}20;color:${col};font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;flex-shrink:0">${lbl}</span></div><div style="display:flex;gap:5px;align-items:center"><button onclick="prospEnvoyerEmail('${c.id}')" style="flex:1;background:linear-gradient(135deg,#0B1F3A,#0EA5E9);color:white;border:none;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:700;cursor:pointer">✉ Email</button>${telBtn}<select onchange="prospSetStatut('${c.id}',this.value)" style="font-size:9px;padding:3px 5px;border-radius:6px;border:1.5px solid #E2E8F0;cursor:pointer;max-width:75px">${opts}</select><button onclick="prospNoter('${c.id}')" style="background:#F1F5F9;border:none;border-radius:6px;padding:4px 6px;cursor:pointer;font-size:10px">📝</button></div>${noteHtml}</div>`;
 }
 
-function loadFlyerImage(input){
-  const file=input.files[0];
-  if(!file)return;
-  if(file.size>10*1024*1024){alert('Image trop lourde (max 10MB)');return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    state.flyerImage=e.target.result;
-    render();
-    showToast('Image chargee ! Choisissez vos clients et envoyez.');
+function prospSetFiltre(filtre){
+  if(!state.prospection)state.prospection={contacts:[],filtre:'restaurant',rayon:10};
+  state.prospection.filtre=filtre;
+  render();
+}
+
+async function prospRechercher(){
+  const rayon=parseInt(document.getElementById('prosp-rayon')?.value||10);
+  const filtre=state.prospection?.filtre||'restaurant';
+  if(!state.prospection)state.prospection={contacts:[],filtre,rayon};
+  state.prospection.rayon=rayon;
+
+  const status=document.getElementById('prosp-status');
+  if(status)status.textContent='Recherche en cours...';
+
+  // Coordonnées Domdidier
+  const lat=46.9028,lon=7.0192;
+
+  // Mapping vers termes Nominatim
+  const filtreMap={
+    restaurant:'restaurant',hotel:'hotel',company:'entreprise',
+    school:'ecole',place_of_worship:'eglise',sports_centre:'sport',
+    supermarket:'supermarche',car_dealer:'garage'
   };
-  reader.readAsDataURL(file);
+  const terme=filtreMap[filtre]||filtre;
+
+  try{
+    // Nominatim — API publique OSM, CORS compatible tous navigateurs
+    const url=`https://nominatim.openstreetmap.org/search?`
+      +`q=${encodeURIComponent(terme)}`
+      +`&lat=${lat}&lon=${lon}`
+      +`&bounded=1`
+      +`&viewbox=${lon-rayon*0.015},${lat+rayon*0.012},${lon+rayon*0.015},${lat-rayon*0.012}`
+      +`&format=json&limit=40&addressdetails=1&extratags=1`;
+
+    const resp=await fetch(url,{
+      headers:{'Accept':'application/json','Accept-Language':'fr'}
+    });
+
+    if(!resp.ok)throw new Error('Reponse serveur: '+resp.status);
+    const data=await resp.json();
+
+    const nouveaux=data.map(el=>{
+      const ext=el.extratags||{};
+      const addr=el.address||{};
+      return{
+        id:'nom_'+el.place_id,
+        nom:el.display_name.split(',')[0]||'Etablissement',
+        adresse:[addr.road,addr.house_number,addr.town||addr.village||addr.city].filter(Boolean).join(' ')||el.display_name.split(',').slice(1,3).join(',').trim(),
+        tel:ext.phone||ext['contact:phone']||'',
+        email:ext.email||ext['contact:email']||'',
+        web:ext.website||ext['contact:website']||'',
+        lat:parseFloat(el.lat),
+        lon:parseFloat(el.lon),
+        statut:'nouveau',note:'',
+        type:filtre,dateContact:null
+      };
+    }).filter(c=>c.nom&&c.nom.length>1);
+
+    // Vider et remplacer (pas accumuler)
+    state.prospection.contacts=nouveaux;
+    saveStorage('prospection');
+
+    if(status)status.textContent=nouveaux.length+' trouvés';
+
+    // Mettre à jour le panel résultats
+    const liste=document.getElementById('prosp-liste');
+    const count=document.getElementById('prosp-count');
+    if(count)count.textContent='('+nouveaux.length+')';
+    if(liste){
+      if(nouveaux.length===0){
+        liste.innerHTML=`<div style="text-align:center;padding:40px 16px;color:#94A3B8">
+          <div style="font-size:32px;margin-bottom:8px">🔍</div>
+          <div style="font-weight:600;font-size:13px">Aucun résultat</div>
+          <div style="font-size:11px;margin-top:4px">Essayez un rayon plus grand</div>
+        </div>`;
+      } else {
+        liste.innerHTML=nouveaux.map(c=>prospContactCard(c)).join('');
+      }
+    }
+
+    // Initialiser/mettre à jour la carte
+    setTimeout(()=>prospInitMap(lat,lon,nouveaux),100);
+
+  }catch(e){
+    console.error('Prospection error:',e);
+    if(status)status.textContent='Pas de resultats pour cette zone — essayez un rayon plus grand';
+  }
 }
 
-function envoyerFlyerWA(){
-  const dest=document.getElementById('flyer-dest')?.value;
-  const msg=document.getElementById('flyer-msg')?.value||'Bonjour, voici notre offre speciale !';
-  const clients=dest==='tous'?state.clients:[state.clients.find(x=>x.id===parseInt(dest))].filter(Boolean);
-  let i=0;
-  clients.forEach(c=>{
-    let num=(c.tel||'').replace(/\s/g,'').replace(/[^0-9+]/g,'');
-    if(num.startsWith('0'))num='41'+num.slice(1);
-    if(num.startsWith('+'))num=num.slice(1);
-    if(!num)return;
-    const m=msg.replace('[Prenom]',c.nom.split(' ')[0]);
-    setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(m),'_blank'),i++*800);
-  });
-  showToast('WhatsApp ouvert — ajoutez votre image en piece jointe !');
-}
+function prospInitMap(centerLat,centerLon,points){
+  const mapEl=document.getElementById('prosp-map');
+  if(!mapEl)return;
 
-function envoyerFlyerEmail(){
-  const dest=document.getElementById('flyer-dest')?.value;
-  const msg=document.getElementById('flyer-msg')?.value||'Bonjour, voici notre offre speciale !';
-  const clients=dest==='tous'?state.clients:[state.clients.find(x=>x.id===parseInt(dest))].filter(Boolean);
-  const emails=clients.map(c=>c.email).filter(Boolean).join(',');
-  window.location.href='mailto:'+emails+'?subject=Offre+speciale+Bowen+HydroClean&body='+encodeURIComponent(msg);
-  showToast('Email ouvert — ajoutez votre flyer en piece jointe !');
-}
-
-
-function renderNouvelleMarketing(tabBar){
-  return `
-  <div class="page-header"><div><div class="page-title">📣 Marketing</div></div></div>
-  ${tabBar}
-  <div class="grid2" style="align-items:start">
-    <div class="card">
-      <div class="section-title">Nouvelle campagne</div>
-      <div class="form-grid">
-        <div class="fg full"><label>Titre de la campagne</label><input id="mk-titre" placeholder="Ex: Offre printemps 2026 -15%"></div>
-        <div class="fg full"><label>Type de message</label>
-          <select id="mk-type">
-            ${MARKETING_TYPES.map(t=>`<option value="${t.id}">${t.label} — ${t.desc}</option>`).join('')}
-          </select>
-        </div>
-        <div class="fg full"><label>Clients ciblés</label>
-          <div style="background:var(--bg);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:12px;font-weight:600;color:var(--blue);padding:4px 0;border-bottom:1px solid var(--border)">
-              <input type="checkbox" id="mk-all" onchange="toggleAllClients(this)" style="width:15px;height:15px;accent-color:var(--blue)">
-              Tous les clients (${state.clients.length})
-            </label>
-            ${state.clients.map(c=>`
-              <label class="mk-client-row" style="display:flex;align-items:center;gap:8px;cursor:pointer;text-transform:none;font-size:13px;font-weight:400;letter-spacing:0;padding:4px 0">
-                <input type="checkbox" class="mk-client-cb" value="${c.id}" style="width:14px;height:14px;accent-color:var(--blue)">
-                <div style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-size:10px;font-weight:700;flex-shrink:0">${c.nom.charAt(0)}</div>
-                <div><div style="font-weight:500">${c.nom}</div><div style="font-size:10px;color:var(--gray)">${c.ville||'—'} · ${c.tel||'—'}</div></div>
-              </label>`).join('')}
-          </div>
-        </div>
-        <div class="fg"><label>🔔 Délai de relance (jours)</label><input id="mk-relance" type="number" value="7" min="1" max="30" placeholder="7"></div>
-        <div class="fg"><label>Canal d'envoi</label>
-          <select id="mk-canal">
-            <option value="whatsapp">📱 WhatsApp</option>
-            <option value="email">📧 Email</option>
-            <option value="les deux">📱 + 📧 Les deux</option>
-          </select>
-        </div>
-        <div class="fg full"><label>Message personnalisé (optionnel)</label>
-          <textarea id="mk-message" placeholder="Laissez vide pour générer avec l'IA..." style="min-height:100px"></textarea>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
-        <button class="btn btn-ai" onclick="genererMessageMarketing()">✨ Générer avec l'IA</button>
-        <button class="btn btn-primary" onclick="creerCampagne()">💾 Créer la campagne</button>
-      </div>
-    </div>
-    <div class="card">
-      <div class="section-title">Aperçu du message</div>
-      <div id="mk-preview" style="background:var(--bg);border-radius:10px;padding:16px;font-size:13px;line-height:1.7;white-space:pre-line;min-height:200px;color:var(--gray);font-style:italic">
-        Cliquez sur "Générer avec l'IA" pour créer votre message marketing personnalisé...
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderSuiviMarketing(tabBar){
-  const now=new Date();
-  const campActives=state.campagnes.filter(c=>c.statut==='envoyée');
-  return `
-  <div class="page-header"><div><div class="page-title">📣 Marketing</div><div class="page-sub">Suivi des campagnes actives</div></div></div>
-  ${tabBar}
-  ${campActives.length===0?`<div class="card" style="text-align:center;padding:30px;color:var(--gray)">Aucune campagne active en ce moment.</div>`
-  :campActives.map(c=>{
-    const jours=Math.floor((now-new Date(c.dateEnvoi))/864e5);
-    const aRelancer=c.destinataires?.filter(d=>!d.repondu&&jours>=(c.delaiRelance||7))||[];
-    return`<div class="card" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <div>
-          <div style="font-weight:800;font-size:16px">${c.titre}</div>
-          <div style="font-size:12px;color:var(--gray)">Envoyée il y a ${jours} jour${jours!==1?'s':''} · Relance après ${c.delaiRelance||7}j</div>
-        </div>
-        ${aRelancer.length>0?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerCampagne(${c.id})">
-          🔔 Relancer ${aRelancer.length} client${aRelancer.length>1?'s':''}
-        </button>`:'<span style="color:var(--green);font-size:12px;font-weight:600">✅ Tout le monde a répondu</span>'}
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px">
-        ${(c.destinataires||[]).map(d=>`
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:9px;background:var(--bg);border-left:3px solid ${d.repondu?'var(--green)':'var(--border)'}">
-            <div style="display:flex;align-items:center;gap:10px">
-              <div style="width:28px;height:28px;border-radius:7px;background:${d.repondu?'var(--green)':'var(--border)'};display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:11px">${d.nom.charAt(0)}</div>
-              <div>
-                <div style="font-weight:600;font-size:13px">${d.nom}</div>
-                <div style="font-size:11px;color:var(--gray)">${d.canal==='whatsapp'?'📱':'📧'} ${d.contact||'—'}</div>
-              </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              ${d.repondu
-                ?`<span style="background:#D1FAE5;color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px">✅ Répondu</span>`
-                :`<span style="background:#FEF3C7;color:var(--orange);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px">⏳ En attente</span>
-                 <button class="btn btn-secondary btn-sm" onclick="marquerRepondu(${c.id},'${d.clientId}')">✓ Marquer répondu</button>
-                 ${jours>=(c.delaiRelance||7)?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerClient(${c.id},'${d.clientId}')">
-                   <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.657-.502-5.184-1.379l-.371-.22-3.862.921.977-3.773-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                 </button>`:''}`}
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>`;}).join('')}`;
-}
-
-// ── MARKETING FUNCTIONS ─────────────────────────────────────────────────────
-
-function toggleAllClients(cb){
-  document.querySelectorAll('.mk-client-cb').forEach(c=>c.checked=cb.checked);
-}
-
-async function genererMessageMarketing(){
-  const type=document.getElementById('mk-type')?.value||'promo';
-  const typeLabel=MARKETING_TYPES.find(t=>t.id===type)?.label||type;
-  const preview=document.getElementById('mk-preview');
-  if(!preview)return;
-
-  // Vérifier clé API
-  const apiKey=state.settings.apiKey||'';
-  if(!apiKey){
-    preview.innerHTML=`<div style="background:#FEE2E2;border-radius:9px;padding:14px;color:var(--red);font-size:13px">
-      <strong>🔑 Clé API manquante</strong><br>
-      Ajoutez votre clé API Anthropic dans <strong>⚙️ Coordonnées bancaires → Clé API</strong> pour utiliser l'IA.<br><br>
-      <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue)">→ Obtenir une clé sur console.anthropic.com</a>
-    </div>`;
+  // Vérifier si Leaflet est chargé
+  if(typeof L==='undefined'){
+    // Charger Leaflet dynamiquement
+    if(!document.getElementById('leaflet-css')){
+      const css=document.createElement('link');
+      css.id='leaflet-css';css.rel='stylesheet';
+      css.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';
+      document.head.appendChild(css);
+    }
+    if(!document.getElementById('leaflet-js')){
+      const js=document.createElement('script');
+      js.id='leaflet-js';
+      js.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+      js.onload=()=>prospInitMap(centerLat,centerLon,points);
+      document.head.appendChild(js);
+      return;
+    }
+    setTimeout(()=>prospInitMap(centerLat,centerLon,points),500);
     return;
   }
 
-  preview.innerHTML='<div style="display:flex;align-items:center;gap:8px;color:var(--gray)"><div class="pulse"></div><div class="pulse"></div><div class="pulse"></div> Génération en cours...</div>';
+  // Détruire carte existante
+  if(window._prospMap){window._prospMap.remove();window._prospMap=null;}
+
+  const map=L.map('prosp-map').setView([centerLat,centerLon],13);
+  window._prospMap=map;
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© OpenStreetMap',maxZoom:19
+  }).addTo(map);
+
+  // Marqueur Domdidier (centre)
+  L.marker([centerLat,centerLon],{
+    icon:L.divIcon({html:'<div style="background:var(--navy);color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">🏠</div>',iconSize:[20,20],className:''})
+  }).addTo(map).bindPopup('<b>Bowen HydroClean</b><br>Domdidier');
+
+  // Marqueurs entreprises
+  points.forEach(p=>{
+    if(!p.lat||!p.lon)return;
+    const marker=L.marker([p.lat,p.lon],{
+      icon:L.divIcon({html:`<div style="background:#0EA5E9;color:white;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.3);border:2px solid white">📍</div>`,iconSize:[28,28],className:''})
+    }).addTo(map);
+    marker.bindPopup(`
+      <div style="min-width:180px;font-family:'DM Sans',sans-serif">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px">${p.nom}</div>
+        <div style="font-size:11px;color:#64748B;margin-bottom:8px">${p.adresse}</div>
+        ${p.tel?`<div style="font-size:11px;margin-bottom:4px">📞 ${p.tel}</div>`:''}
+        <button onclick="prospEnvoyerEmail('${p.id}')" style="background:#0EA5E9;color:white;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;width:100%;margin-top:4px">✉ Envoyer offre</button>
+      </div>`);
+  });
+}
+
+function prospSetStatut(id,statut){
+  const c=(state.prospection?.contacts||[]).find(x=>x.id===id);
+  if(c){c.statut=statut;c.dateContact=new Date().toISOString().split('T')[0];saveStorage('prospection');}
+  const liste=document.getElementById('prosp-liste');
+  if(liste)liste.innerHTML=(state.prospection?.contacts||[]).map(c=>prospContactCard(c)).join('');
+}
+
+function prospNoter(id){
+  const c=(state.prospection?.contacts||[]).find(x=>x.id===id);
+  if(!c)return;
+  const note=prompt('Note pour '+c.nom+' :',c.note||'');
+  if(note!==null){c.note=note;saveStorage('prospection');}
+  const liste=document.getElementById('prosp-liste');
+  if(liste)liste.innerHTML=(state.prospection?.contacts||[]).map(c=>prospContactCard(c)).join('');
+}
+
+function prospViderContacts(){
+  if(!confirm('Vider tous les contacts de prospection ?'))return;
+  if(state.prospection)state.prospection.contacts=[];
+  render();
+}
+
+async function prospEnvoyerEmail(id){
+  const c=(state.prospection?.contacts||[]).find(x=>x.id===id);
+  if(!c)return;
   const s=state.settings;
-  const prompt=`Tu es un expert en marketing pour une entreprise de nettoyage haute pression en Suisse romande.
-Génère un message WhatsApp professionnel et sympathique pour une campagne de type: ${typeLabel}.
-Entreprise: Bowen HydroClean, Nettoyage extérieur, basée à ${s.npa||'Domdidier'}.
-Le message doit:
-- Commencer par "Bonjour [Prénom],"
-- Être en français, ton chaleureux et professionnel
-- Inclure une accroche claire et une offre ou message concret
-- Mentionner Bowen HydroClean
-- Se terminer par une invitation à répondre ou appeler
-- Faire 5-7 lignes maximum
-- Utiliser quelques emojis pertinents
-Génère uniquement le message, sans explication.`;
-  try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':apiKey,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true',
-      },
-      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:400,messages:[{role:'user',content:prompt}]})
-    });
-    const data=await resp.json();
-    if(data.error){throw new Error(data.error.message);}
-    const msg=data.content?.[0]?.text||'Erreur de génération';
-    preview.style.cssText='background:var(--bg);border-radius:10px;padding:16px;font-size:13px;line-height:1.75;white-space:pre-line;color:var(--text)';
-    preview.textContent=msg;
-    if(document.getElementById('mk-message'))document.getElementById('mk-message').value=msg;
-  }catch(e){
-    preview.innerHTML=`<div style="color:var(--red);font-size:13px;padding:10px">❌ Erreur : ${e.message}</div>`;
+  const apiKey=s.apiKey||'';
+
+  // Générer message IA si clé disponible
+  let msg=`Bonjour,\n\nNous sommes Bowen HydroClean, spécialistes du nettoyage haute pression en Suisse romande.\n\nNous serions ravis de vous proposer nos services pour l'entretien de vos façades, terrasses et allées.\n\nDevis gratuit et sans engagement au ${s.waNumber||'079 663 88 16'} ou ${s.email||'info@bowenhydroclean.ch'}\n\nCordialement,\nBowen HydroClean — Domdidier`;
+
+  if(apiKey){
+    try{
+      const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:250,messages:[{role:'user',content:`Email de prospection B2B concis pour ${c.nom} (${c.type}). Bowen HydroClean, nettoyage haute pression, Domdidier Suisse. Propose devis gratuit. Tel: ${s.waNumber||'079 663 88 16'}. Francais professionnel, sans emojis, max 5 lignes.`}]})});
+      const data=await resp.json();
+      if(!data.error)msg=data.content?.[0]?.text||msg;
+    }catch(e){}
   }
+
+  const email=c.email||'';
+  const sujet=encodeURIComponent('Offre de service - Bowen HydroClean');
+  const corps=encodeURIComponent(msg);
+
+  if(email){
+    try{window.location.href='mailto:'+(email||'')+'?subject='+sujet+'&body='+corps;}catch(_e){showToast('Ouvrez votre application email');}
+  } else {
+    // Afficher modal avec message à copier
+    document.getElementById('modalContent').innerHTML=`
+      <div class="modal-header">
+        <div><div class="modal-title">✉ Email pour ${c.nom}</div><div style="font-size:12px;color:var(--gray)">Pas d'email trouvé — copiez le message</div></div>
+        <button class="btn-ghost" onclick="closeModal()">✕</button>
+      </div>
+      <pre id="prosp-email-msg" style="background:var(--bg);padding:14px;border-radius:9px;font-size:12px;white-space:pre-wrap;line-height:1.7;max-height:300px;overflow-y:auto">${msg}</pre>
+      <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText(document.getElementById('prosp-email-msg').textContent).then(()=>showToast('Copié !'))">
+          📋 Copier
+        </button>
+        <button class="btn btn-sm" style="background:var(--green);color:white;font-weight:700" onclick="window.location.href='mailto:?subject='+encodeURIComponent('Offre de service - Bowen HydroClean')+'&body='+encodeURIComponent(document.getElementById('prosp-email-msg').textContent)">
+          📨 Envoyer
+        </button>
+        ${c.tel?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="sendWhatsApp('${c.tel}',document.getElementById('prosp-email-msg').textContent)">💬 WA</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+      </div>`;
+    openModal();
+  }
+
+  // Marquer comme contacté
+  c.statut='contacte';c.dateContact=new Date().toISOString().split('T')[0];
+  saveStorage('prospection');
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PAGE CAMPAGNE
+// ══════════════════════════════════════════════════════════════════════════════
+function mkPageCampagne(nav,camps,selIds){
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Marketing</div></div>
+  </div>
+  ${nav}
+
+  <div class="grid2" style="align-items:start;gap:16px">
+
+    <!-- GAUCHE : FORMULAIRE -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Boutons magic -->
+      <div class="card" style="padding:14px">
+        <div style="font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Suggestions rapides</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${[
+            ['promo','Offre -20%','#0EA5E9'],
+            ['saison','Printemps','#10B981'],
+            ['relance','Relance','#F59E0B'],
+            ['parrainage','Parrainage','#8B5CF6'],
+            ['urgence','Flash 48h','#EF4444'],
+          ].map(([t,l,c])=>`
+            <button onclick="mkMagic('${t}')" style="background:${c}18;color:${c};border:1.5px solid ${c}40;border-radius:20px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">
+              ${l}
+            </button>`).join('')}
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="card" style="padding:16px">
+        <div class="form-grid">
+          <div class="fg full"><label>Titre de la campagne</label>
+            <input id="mk-titre" placeholder="Ex: Offre printemps 2026">
+          </div>
+          <div class="fg"><label>Type</label>
+            <select id="mk-type">
+              <option value="promo">Offre promotionnelle</option>
+              <option value="saison">Saisonniere</option>
+              <option value="relance">Relance inactif</option>
+              <option value="parrainage">Parrainage</option>
+              <option value="urgence">Flash urgence</option>
+            </select>
+          </div>
+          <div class="fg"><label>Canal</label>
+            <select id="mk-canal">
+              <option value="whatsapp">WhatsApp</option>
+              <option value="email">Email</option>
+              <option value="les deux">WA + Email</option>
+            </select>
+          </div>
+          <div class="fg full"><label>Delai relance (jours)</label>
+            <input id="mk-relance" type="number" value="7" min="1" max="60">
+          </div>
+        </div>
+      </div>
+
+      <!-- Message -->
+      <div class="card" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <label style="font-size:13px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0">Message</label>
+          <button class="btn btn-ai btn-sm" onclick="genererMessageMarketing()">✨ Generer IA</button>
+        </div>
+        <textarea id="mk-message" style="min-height:110px" placeholder="Redigez ou generez avec l'IA..."></textarea>
+      </div>
+
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px" onclick="creerCampagne()">
+        Creer la campagne →
+      </button>
+    </div>
+
+    <!-- DROITE : CLIENTS + HISTORIQUE -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Clients -->
+      <div class="card" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <label style="font-size:13px;font-weight:700;color:var(--text);text-transform:none;letter-spacing:0">Clients cibles <span id="mk-count" style="color:var(--blue)">(${selIds.size})</span></label>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary btn-sm" onclick="mkSelAll(true)">Tous</button>
+            <button class="btn btn-secondary btn-sm" onclick="mkSelAll(false)">Aucun</button>
+          </div>
+        </div>
+        <input id="mk-search" oninput="mkFiltrer(this.value)" placeholder="Rechercher..." style="margin-bottom:8px">
+        <div id="mk-list" style="max-height:220px;overflow-y:auto;border:1.5px solid var(--border);border-radius:9px">
+          ${state.clients.map(c=>`
+            <div onclick="mkToggle(${c.id})" style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);background:${selIds.has(c.id)?'#EFF6FF':'white'}">
+              <div style="width:18px;height:18px;border-radius:4px;border:2px solid ${selIds.has(c.id)?'var(--blue)':'var(--border)'};background:${selIds.has(c.id)?'var(--blue)':'white'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                ${selIds.has(c.id)?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}
+              </div>
+              <div style="width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--navy),var(--blue));color:white;font-weight:800;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${c.nom.charAt(0)}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nom}</div>
+                <div style="font-size:11px;color:var(--gray)">${c.tel||'—'}${c.ville?' · '+c.ville:''}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <div class="card" style="padding:16px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px">Historique (${camps.length})</div>
+        ${camps.length===0
+          ?`<div style="text-align:center;padding:16px;color:var(--gray);font-size:13px">Aucune campagne encore</div>`
+          :`<div style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto">
+            ${camps.map(c=>{
+              const n=c.destinataires?.length||0;
+              const r=c.destinataires?.filter(d=>d.repondu).length||0;
+              const j=c.dateEnvoi?Math.floor((new Date()-new Date(c.dateEnvoi))/864e5):0;
+              const rel=c.statut==='envoyee'&&j>=(c.delaiRelance||7)?c.destinataires?.filter(d=>!d.repondu).length:0;
+              const sc={brouillon:'#64748B',envoyee:'#0284C7',terminee:'#059669'};
+              return`<div style="padding:10px 12px;border:1.5px solid var(--border);border-radius:9px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap">
+                  <div style="min-width:0;flex:1">
+                    <div style="font-weight:700;font-size:13px;margin-bottom:3px">${c.titre}</div>
+                    <div style="font-size:11px;color:var(--gray)">${new Date(c.dateCrea).toLocaleDateString('fr-CH')} · ${n} envoyés · ${r} répondus · ${n?Math.round(r/n*100):0}%
+                      ${rel>0?`<span style="color:var(--red);font-weight:700"> · ${rel} à relancer</span>`:''}
+                    </div>
+                  </div>
+                  <div style="display:flex;gap:4px;flex-shrink:0">
+                    ${c.statut==='brouillon'?`<button class="btn btn-primary btn-sm" onclick="lancerCampagne(${c.id})">Lancer</button>`:''}
+                    ${rel>0?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerCampagne(${c.id})">Relancer</button>`:''}
+                    <button class="btn btn-secondary btn-sm" onclick="voirSuiviCampagne(${c.id})">Suivi</button>
+                    <button class="btn btn-secondary btn-sm" style="color:var(--red);padding:6px 8px" onclick="supprimerCampagne(${c.id})">✕</button>
+                  </div>
+                </div>
+              </div>`;}).join('')}
+          </div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PAGE FLYER
+// ══════════════════════════════════════════════════════════════════════════════
+function mkPageFlyer(nav){
+  const img=state.flyerImage||null;
+  const selIds=state.flyerSelIds||new Set();
+  return `
+  <div class="page-header">
+    <div><div class="page-title">Marketing</div></div>
+  </div>
+  ${nav}
+
+  <div class="grid2" style="align-items:start;gap:16px">
+
+    <!-- GAUCHE : UPLOAD -->
+    <div class="card" style="padding:16px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:12px">Votre flyer</div>
+      <label style="display:block;border:2px dashed var(--border);border-radius:10px;padding:${img?'8px':'24px'};text-align:center;cursor:pointer;background:var(--bg)" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">
+        <input type="file" accept="image/*" style="display:none" onchange="loadFlyerImage(this)">
+        ${img
+          ?`<img src="${img}" style="max-width:100%;max-height:280px;border-radius:8px;object-fit:contain;display:block;margin:0 auto">
+            <div style="font-size:11px;color:var(--blue);margin-top:8px;font-weight:600">Cliquez pour changer</div>`
+          :`<div style="font-size:36px;margin-bottom:8px">🖼️</div>
+            <div style="font-weight:700;font-size:14px;color:var(--navy)">Deposez votre flyer</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:4px">PNG ou JPG depuis Canva</div>`}
+      </label>
+      ${img?`<button class="btn btn-secondary btn-sm" style="margin-top:10px" onclick="state.flyerImage=null;render()">Supprimer</button>`:''}
+    </div>
+
+    <!-- DROITE : MESSAGE + ENVOI -->
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Message IA -->
+      <div class="card" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700">Message</div>
+          <div style="display:flex;gap:6px;align-items:center">
+            <select id="flyer-type-ia" style="font-size:12px;padding:5px 8px;width:auto">
+              <option value="promo">Offre promo</option>
+              <option value="saison">Saisonniere</option>
+              <option value="parrain">Parrainage</option>
+              <option value="urgence">Flash urgence</option>
+            </select>
+            <button class="btn btn-ai btn-sm" onclick="genererMessageFlyer()">✨ IA</button>
+          </div>
+        </div>
+        <textarea id="flyer-msg" style="min-height:110px" placeholder="Generez ou redigez votre message...">${state.flyerAiMsg||'Bonjour [Prenom], voici notre offre speciale Bowen HydroClean !'}</textarea>
+      </div>
+
+      <!-- Clients + Envoi -->
+      <div class="card" style="padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700">Clients <span style="color:var(--blue)">(${selIds.size||state.clients.length})</span></div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-secondary btn-sm" onclick="flyerSelAll(true)">Tous</button>
+            <button class="btn btn-secondary btn-sm" onclick="flyerSelAll(false)">Aucun</button>
+          </div>
+        </div>
+        <input id="flyer-search" oninput="filtrerClientsFlyer(this.value)" placeholder="Rechercher..." style="margin-bottom:8px">
+        <div id="flyer-list" style="max-height:160px;overflow-y:auto;border:1.5px solid var(--border);border-radius:9px;margin-bottom:12px">
+          ${state.clients.map(c=>`
+            <div onclick="flyerToggle(${c.id})" style="display:flex;align-items:center;gap:10px;padding:7px 11px;cursor:pointer;border-bottom:1px solid var(--border);background:${selIds.has(c.id)?'#EFF6FF':'white'}">
+              <div style="width:16px;height:16px;border-radius:3px;border:2px solid ${selIds.has(c.id)?'var(--blue)':'var(--border)'};background:${selIds.has(c.id)?'var(--blue)':'white'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                ${selIds.has(c.id)?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}
+              </div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nom}</div>
+                <div style="font-size:10px;color:var(--gray)">${c.tel||'—'}${c.ville?' · '+c.ville:''}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700;flex:1" onclick="envoyerFlyerWA()">WA Envoyer</button>
+          <button class="btn btn-primary btn-sm" style="flex:1" onclick="envoyerFlyerEmail()">Email</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-sm" style="background:#1877F2;color:white;flex:1;font-weight:700" onclick="window.open('https://www.facebook.com','_blank')">Facebook</button>
+          <button class="btn btn-sm" style="background:linear-gradient(135deg,#833AB4,#E1306C);color:white;flex:1;font-weight:700" onclick="window.open('https://www.instagram.com','_blank')">Instagram</button>
+        </div>
+        <div style="background:#D1FAE5;border-radius:8px;padding:8px 12px;font-size:11px;color:#065F46;margin-top:10px">
+          WA s'ouvre avec votre message. Le flyer se telecharge automatiquement — joignez-le via le trombone.
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── HELPERS COMMUNS ───────────────────────────────────────────────────────────
+function supprimerEmojis(t){return t.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{27BF}\u{FE00}-\u{FEFF}]/gu,'').trim();}
+
+function mkMagic(type){
+  const titres={promo:'Offre speciale printemps',saison:'Nettoyage de printemps',relance:'On pense a vous',parrainage:'Parrainez un ami',urgence:'Offre flash 48h'};
+  const t=document.getElementById('mk-titre');const s=document.getElementById('mk-type');
+  if(t)t.value=titres[type]||'';if(s)s.value=type;
+  showToast('Template applique — cliquez IA Generer !');
+}
+
+function mkToggle(id){
+  if(!state.mkSelIds)state.mkSelIds=new Set();
+  if(state.mkSelIds.has(id))state.mkSelIds.delete(id);else state.mkSelIds.add(id);
+  // Update UI without full re-render
+  const row=document.querySelector(`#mk-client-list [data-id="${id}"]`);
+  if(row){
+    const checked=state.mkSelIds.has(id);
+    row.style.background=checked?'#EFF6FF':'white';
+    const box=row.querySelector('div');
+    if(box){box.style.borderColor=checked?'var(--blue)':'var(--border)';box.style.background=checked?'var(--blue)':'white';box.innerHTML=checked?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':'';}
+  }
+  const count=document.getElementById('mk-count');
+  if(count)count.textContent='('+state.mkSelIds.size+')';
+}
+
+function mkSelAll(checked){
+  if(!state.mkSelIds)state.mkSelIds=new Set();
+  const visible=[...document.querySelectorAll('#mk-client-list label')];
+  visible.forEach(row=>{
+    const m=row.getAttribute('onclick').match(/\d+/);if(!m)return;
+    const id=parseInt(m[0]);
+    if(checked)state.mkSelIds.add(id);else state.mkSelIds.delete(id);
+    row.style.background=checked?'#EFF6FF':'white';
+    const box=row.querySelector('div');
+    if(box){box.style.borderColor=checked?'var(--blue)':'var(--border)';box.style.background=checked?'var(--blue)':'white';box.innerHTML=checked?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':'';}
+  });
+  const count=document.getElementById('mk-count');
+  if(count)count.textContent='('+state.mkSelIds.size+')';
+}
+
+function mkFiltrer(q){
+  const s=q.toLowerCase();
+  document.querySelectorAll('#mk-client-list label').forEach(r=>{r.style.display=(!s||r.textContent.toLowerCase().includes(s))?'flex':'none';});
+}
+
+async function genererMessageMarketing(){
+  const el=document.getElementById('mk-message');if(!el)return;
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante — Factures > Coordonnees bancaires');return;}
+  const type=document.getElementById('mk-type')?.value||'promo';
+  const labels={promo:'offre promotionnelle',saison:'offre saisonniere',relance:'relance client inactif',parrainage:'parrainage',urgence:'offre flash urgence'};
+  el.value='Generation en cours...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:250,messages:[{role:'user',content:`Message WhatsApp pour ${labels[type]} Bowen HydroClean, nettoyage haute pression, ${state.settings.npa||'Domdidier'}, Suisse. Commence par "Bonjour [Prenom],". Max 4 lignes. Texte brut, aucun emoji.`}]})
+    });
+    const d=await r.json();if(d.error)throw new Error(d.error.message);
+    el.value=supprimerEmojis(d.content?.[0]?.text||'');showToast('Message genere !');
+  }catch(e){el.value='';alert('Erreur : '+e.message);}
 }
 
 function creerCampagne(){
   const titre=document.getElementById('mk-titre')?.value.trim();
-  if(!titre)return alert('Veuillez saisir un titre de campagne.');
-  const clientsChecked=[...document.querySelectorAll('.mk-client-cb:checked')].map(cb=>parseInt(cb.value));
-  if(!clientsChecked.length)return alert('Veuillez sélectionner au moins un client.');
-  const canal=document.getElementById('mk-canal')?.value||'whatsapp';
   const message=document.getElementById('mk-message')?.value.trim();
-  if(!message)return alert('Veuillez générer ou saisir un message.');
-  const destinataires=clientsChecked.map(cid=>{
-    const c=state.clients.find(x=>x.id===cid);
-    return{clientId:cid,nom:c?.nom||'',contact:canal==='email'?c?.email:c?.tel,canal,repondu:false,dateEnvoi:null};
-  });
-  const camp={
-    id:state.nextCampagneId++,
-    titre,
+  if(!titre)return alert('Titre manquant.');
+  if(!message)return alert('Message manquant.');
+  const ids=state.mkSelIds||new Set();
+  if(!ids.size)return alert('Selectionnez au moins un client.');
+  const canal=document.getElementById('mk-canal')?.value||'whatsapp';
+  const dest=[...ids].map(cid=>{const c=state.clients.find(x=>x.id===cid);return{clientId:cid,nom:c?.nom||'',tel:c?.tel||'',email:c?.email||'',canal,repondu:false};});
+  state.campagnes.push({
+    id:state.nextCampagneId++,titre,message,canal,
     type:document.getElementById('mk-type')?.value||'promo',
-    message,canal,
     delaiRelance:parseInt(document.getElementById('mk-relance')?.value)||7,
-    destinataires,
-    statut:'brouillon',
-    dateCrea:new Date().toISOString().split('T')[0],
-    dateEnvoi:null,
-  };
-  state.campagnes.push(camp);
+    destinataires:dest,statut:'brouillon',
+    dateCrea:new Date().toISOString().split('T')[0],dateEnvoi:null
+  });
   saveStorage('campagnes');
-  state.marketingTab='campagnes';
-  render();
-  showToast('✅ Campagne créée ! Lancez-la quand vous êtes prêt.');
+  state.mkSelIds=new Set();
+  document.getElementById('mk-titre').value='';
+  document.getElementById('mk-message').value='';
+  showToast('Campagne creee !');render();
 }
 
 function lancerCampagne(id){
-  const c=state.campagnes.find(x=>x.id===id);
-  if(!c)return;
-  c.statut='envoyée';
-  c.dateEnvoi=new Date().toISOString().split('T')[0];
-  // Envoyer à chaque destinataire
+  const c=state.campagnes.find(x=>x.id===id);if(!c)return;
+  c.statut='envoyee';c.dateEnvoi=new Date().toISOString().split('T')[0];
   let i=0;
   c.destinataires.forEach(d=>{
-    const client=state.clients.find(x=>x.id===d.clientId)||{};
-    const msg=c.message.replace('[Prénom]',d.nom.split(' ')[0]);
-    if(d.canal==='whatsapp'||d.canal==='les deux'){
-      let num=(d.contact||client.tel||'').replace(/\s/g,'').replace(/[^0-9+]/g,'');
-      if(num.startsWith('0'))num='41'+num.slice(1);
-      if(num.startsWith('+'))num=num.slice(1);
-      if(num)setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank'),i++*700);
+    const prenom=d.nom.split(' ')[0];
+    const msg=c.message.replace(/\[Pr[eé]nom\]/gi,prenom);
+    if(c.canal!=='email'){
+      let num=d.tel.replace(/\s/g,'').replace(/[^\d+]/g,'');
+      if(num.startsWith('0'))num='41'+num.slice(1);if(num.startsWith('+'))num=num.slice(1);
+      if(num)setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(supprimerEmojis(msg)),'_blank'),i++*700);
     }
-    if(d.canal==='email'||d.canal==='les deux'){
-      const email=d.contact||client.email||'';
-      if(email)setTimeout(()=>{window.location.href='mailto:'+email+'?subject='+encodeURIComponent(c.titre)+'&body='+encodeURIComponent(msg);},i++*800);
+    if(c.canal!=='whatsapp'&&d.email){
+      try{setTimeout(()=>{window.location.href='mailto:'+d.email+'?subject='+encodeURIComponent(c.titre)+'&body='+encodeURIComponent(supprimerEmojis(msg));},i++*800);}catch(_e){showToast('Ouvrez votre application email');}
     }
     d.dateEnvoi=new Date().toISOString().split('T')[0];
   });
-  saveStorage('campagnes');
-  render();
-  showToast('🚀 Campagne lancée — '+c.destinataires.length+' messages envoyés !');
+  saveStorage('campagnes');render();showToast('Campagne lancee !');
+}
+
+function voirSuiviCampagne(id){
+  const c=state.campagnes.find(x=>x.id===id);if(!c)return;
+  const j=c.dateEnvoi?Math.floor((new Date()-new Date(c.dateEnvoi))/864e5):0;
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">${c.titre}</div><div style="font-size:12px;color:var(--gray)">Envoyee il y a ${j} jour${j!==1?'s':''}</div></div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;max-height:55vh;overflow-y:auto">
+      ${(c.destinataires||[]).map(d=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border-radius:8px;background:var(--bg);border-left:3px solid ${d.repondu?'var(--green)':'var(--border)'}">
+          <div><div style="font-weight:600;font-size:13px">${d.nom}</div><div style="font-size:11px;color:var(--gray)">${d.tel||d.email||'—'}</div></div>
+          <div style="display:flex;gap:6px">
+            ${d.repondu
+              ?`<span style="background:#D1FAE5;color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px">Repondu</span>`
+              :`<button class="btn btn-secondary btn-sm" onclick="marquerRepondu(${c.id},${d.clientId});closeModal();voirSuiviCampagne(${c.id})">Repondu</button>
+                <button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerClient(${c.id},${d.clientId})">WA</button>`}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="relancerCampagne(${c.id})">Relancer tous</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+    </div>`;
+  openModal();
 }
 
 function marquerRepondu(campId,clientId){
-  const c=state.campagnes.find(x=>x.id===campId);
-  if(!c)return;
-  const d=c.destinataires.find(x=>String(x.clientId)===String(clientId));
+  const c=state.campagnes.find(x=>x.id===campId);if(!c)return;
+  const d=c.destinataires.find(x=>x.clientId===clientId);
   if(d){d.repondu=true;d.dateReponse=new Date().toISOString().split('T')[0];}
-  const tousRepondus=c.destinataires.every(x=>x.repondu);
-  if(tousRepondus)c.statut='terminée';
+  if(c.destinataires.every(x=>x.repondu))c.statut='terminee';
   saveStorage('campagnes');render();
 }
 
 function relancerClient(campId,clientId){
-  const c=state.campagnes.find(x=>x.id===campId);
-  if(!c)return;
-  const d=c.destinataires.find(x=>String(x.clientId)===String(clientId));
-  if(!d)return;
-  const client=state.clients.find(x=>x.id===parseInt(clientId))||{};
-  const msg='🔔 Rappel — '+c.message.replace('[Prénom]',d.nom.split(' ')[0]);
-  let num=(d.contact||client.tel||'').replace(/\s/g,'').replace(/[^0-9+]/g,'');
-  if(num.startsWith('0'))num='41'+num.slice(1);
-  if(num.startsWith('+'))num=num.slice(1);
-  if(num)window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+  const c=state.campagnes.find(x=>x.id===campId);if(!c)return;
+  const d=c.destinataires.find(x=>x.clientId===clientId);if(!d)return;
+  const msg=c.message.replace(/\[Pr[eé]nom\]/gi,d.nom.split(' ')[0]);
+  let num=d.tel.replace(/\s/g,'').replace(/[^\d+]/g,'');
+  if(num.startsWith('0'))num='41'+num.slice(1);if(num.startsWith('+'))num=num.slice(1);
+  if(num)window.open('https://wa.me/'+num+'?text='+encodeURIComponent(supprimerEmojis(msg)),'_blank');
 }
 
 function relancerCampagne(id){
-  const c=state.campagnes.find(x=>x.id===id);
-  if(!c)return;
-  const jours=Math.floor((new Date()-new Date(c.dateEnvoi))/864e5);
-  const aRelancer=c.destinataires.filter(d=>!d.repondu&&jours>=(c.delaiRelance||7));
-  if(!aRelancer.length){showToast('Tous les clients ont déjà répondu !');return;}
-  let i=0;
-  aRelancer.forEach(d=>{
-    const client=state.clients.find(x=>x.id===parseInt(d.clientId))||{};
-    const msg='🔔 Rappel — '+c.message.replace('[Prénom]',d.nom.split(' ')[0]);
-    let num=(d.contact||client.tel||'').replace(/\s/g,'').replace(/[^0-9+]/g,'');
-    if(num.startsWith('0'))num='41'+num.slice(1);
-    if(num.startsWith('+'))num=num.slice(1);
-    if(num)setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank'),i++*700);
+  const c=state.campagnes.find(x=>x.id===id);if(!c)return;
+  const j=Math.floor((new Date()-new Date(c.dateEnvoi))/864e5);
+  const liste=c.destinataires.filter(d=>!d.repondu&&j>=(c.delaiRelance||7));
+  if(!liste.length){showToast('Tous ont deja repondu !');return;}
+  liste.forEach((d,i)=>{
+    const msg=c.message.replace(/\[Pr[eé]nom\]/gi,d.nom.split(' ')[0]);
+    let num=d.tel.replace(/\s/g,'').replace(/[^\d+]/g,'');
+    if(num.startsWith('0'))num='41'+num.slice(1);if(num.startsWith('+'))num=num.slice(1);
+    if(num)setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(supprimerEmojis(msg)),'_blank'),i*700);
   });
-  showToast('🔔 Relance envoyée à '+aRelancer.length+' client'+( aRelancer.length>1?'s':'')+'!');
-}
-
-function voirDetailsCampagne(id){
-  state.marketingTab='suivi';
-  render();
+  showToast('Relance envoyee a '+liste.length+' client'+(liste.length>1?'s':'')+'!');
 }
 
 function supprimerCampagne(id){
@@ -3541,209 +4555,87 @@ function supprimerCampagne(id){
   state.campagnes=state.campagnes.filter(x=>x.id!==id);
   saveStorage('campagnes');render();
 }
-const EMAIL_TPLS=[
-  {id:1,title:'Confirmation de devis',icon:'📄',subject:'Votre devis Bowen HydroClean',body:`Bonjour [Prénom],\n\nSuite à votre demande, veuillez trouver ci-joint votre devis pour le nettoyage haute pression de [prestation] à [Ville].\n\nMontant total TTC : CHF [montant]\nDélai d'intervention : [X] jours ouvrés\nValidité : 30 jours\n\nPour confirmer, répondez à cet email ou appelez-nous directement.\n\nCordialement,\nL'équipe Bowen HydroClean\n📞 [Numéro]\n🌐 www.bowenhydroclean.ch`},
-  {id:2,title:'Confirmation de RDV',icon:'📅',subject:'Confirmation de votre intervention',body:`Bonjour [Prénom],\n\nNous confirmons votre intervention le [Date] à [Heure] pour le nettoyage de [prestation] à [Adresse].\n\nMerci d'assurer l'accès à la surface concernée.\n\nÀ bientôt,\nL'équipe Bowen HydroClean\n📞 [Numéro]`},
-  {id:3,title:'Relance sans réponse',icon:'🔔',subject:'Avez-vous eu le temps de consulter notre offre ?',body:`Bonjour [Prénom],\n\nNous revenons vers vous concernant le devis du [Date]. Avez-vous eu l'occasion d'en prendre connaissance ?\n\nN'hésitez pas à nous contacter pour toute question.\n\nCordialement,\nL'équipe Bowen HydroClean\n📞 [Numéro]`},
-  {id:4,title:"Demande d'avis Google",icon:'⭐',subject:'Votre avis compte pour nous !',body:`Bonjour [Prénom],\n\nNous espérons que vous êtes satisfait(e) de notre intervention du [Date].\n\nUn avis Google nous aiderait beaucoup :\n👉 [Lien Google Business]\n\nMerci pour votre confiance !\n\nL'équipe Bowen HydroClean`},
-  {id:5,title:'Offre saisonnière',icon:'🌿',subject:'Préparez votre extérieur !',body:`Bonjour [Prénom],\n\nLe [printemps / l'automne] approche — c'est le moment idéal pour redonner un coup d'éclat à vos extérieurs !\n\n✅ Terrasses & allées\n✅ Façades & murs\n✅ Toitures & gouttières\n\nDevis gratuit sur bowenhydroclean.ch\n\nL'équipe Bowen HydroClean\n📞 [Numéro]`},
-];
-function renderEmails(){
-  const tpl=EMAIL_TPLS.find(t=>t.id===state.selectedEmail);
-  return `<div class="page-header"><div class="page-title">Modèles d'emails</div></div>
-  <div class="grid2"><div style="display:flex;flex-direction:column;gap:9px">${EMAIL_TPLS.map(t=>`<div class="email-card ${t.id===state.selectedEmail?'sel':''}" onclick="state.selectedEmail=${t.id};render()"><div style="display:flex;align-items:center;gap:9px"><span style="font-size:18px">${t.icon}</span><div><div style="font-weight:700;font-size:13px">${t.title}</div><div style="font-size:11px;color:var(--gray)">${t.subject.substring(0,42)}...</div></div></div></div>`).join('')}</div>
-  <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><div style="font-size:16px;font-weight:800">${tpl.icon} ${tpl.title}</div><div style="font-size:12px;color:var(--gray);margin-top:2px">📧 ${tpl.subject}</div></div><button class="copy-btn" onclick="copyEmail(${tpl.id})">📋 Copier</button></div><div class="email-preview">${tpl.body}</div><div style="margin-top:12px;padding:10px 13px;background:#F0F9FF;border-radius:9px;font-size:11px;color:#0284C7">💡 Remplacez les champs [crochets] par les informations du client.</div></div></div>`;
-}
-function copyEmail(id){
-  const tpl=EMAIL_TPLS.find(t=>t.id===id);
-  navigator.clipboard.writeText(`Objet: ${tpl.subject}\n\n${tpl.body}`).then(()=>{const btn=document.querySelector('.copy-btn');if(btn){btn.textContent='✓ Copié !';setTimeout(()=>{btn.innerHTML='📋 Copier';},2000);}});
-}
 
-// ── OUTILS INTELLIGENTS (100% hors-ligne) ─────────────────────────────────
-function showAI(title){
-  document.getElementById('aiTitle').textContent=title;
-  document.getElementById('aiBody').innerHTML='';
-  document.getElementById('aiActions').innerHTML='';
-  document.getElementById('aiModal').style.display='flex';
-}
-function setAIResult(html, copyText){
-  document.getElementById('aiBody').innerHTML=`<div class="ai-result">${html}</div>`;
-  const txt=copyText||document.querySelector('.ai-result')?.innerText||'';
-  document.getElementById('aiActions').innerHTML=`
-    <button class="copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(txt)});this.textContent='✓ Copié !';setTimeout(()=>this.innerHTML='📋 Copier',2000)">📋 Copier</button>
-    <button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`;
-}
-function closeAI(){document.getElementById('aiModal').style.display='none';}
+function voirDetailsCampagne(id){voirSuiviCampagne(id);}
 
-// Résumé d'activité — généré depuis vos données
-function aiSummary(){
-  showAI('📊 Résumé de votre activité');
-  const ter=state.chantiers.filter(c=>c.statut==='Terminé');
-  const enc=state.chantiers.filter(c=>c.statut==='En cours');
-  const pla=state.chantiers.filter(c=>c.statut==='Planifié'||c.statut==='En attente');
-  const rev=ter.reduce((s,c)=>s+c.montant,0);
-  const avg=ter.length?Math.round(rev/ter.length):0;
-  const surf=state.chantiers.reduce((s,c)=>s+c.surface,0);
-  const conv=state.chantiers.length?Math.round(ter.length/state.chantiers.length*100):0;
-  const now=new Date();
-  const prochains=state.chantiers.filter(c=>c.statut!=='Terminé'&&Math.ceil((new Date(c.date)-now)/864e5)<=7&&Math.ceil((new Date(c.date)-now)/864e5)>=0);
-  let conseil='';
-  if(pla.length>2) conseil='⚡ Vous avez plusieurs chantiers en attente de confirmation — pensez à relancer vos clients.';
-  else if(conv<50) conseil='💡 Votre taux de conversion est faible — envisagez de suivre vos devis plus rapidement.';
-  else conseil='✅ Votre activité est bien équilibrée. Continuez à fidéliser vos clients existants.';
-  const html=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <div style="background:var(--bg);border-radius:9px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--navy)">CHF ${rev.toLocaleString()}</div><div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase;margin-top:3px">Revenus réalisés</div></div>
-      <div style="background:var(--bg);border-radius:9px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--navy)">${conv}%</div><div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase;margin-top:3px">Taux de conversion</div></div>
-      <div style="background:var(--bg);border-radius:9px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--navy)">${surf} m²</div><div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase;margin-top:3px">Surface nettoyée</div></div>
-      <div style="background:var(--bg);border-radius:9px;padding:12px;text-align:center"><div style="font-size:20px;font-weight:800;color:var(--navy)">${avg>0?'CHF '+avg:'-'}</div><div style="font-size:10px;color:var(--gray);font-weight:600;text-transform:uppercase;margin-top:3px">Revenu moyen</div></div>
-    </div>
-    <div style="font-size:13px;line-height:1.7">
-      <b>Situation actuelle :</b> ${enc.length} chantier${enc.length!==1?'s':''} en cours, ${pla.length} à planifier, ${ter.length} terminé${ter.length!==1?'s':''} avec ${state.clients.length} client${state.clients.length!==1?'s':''} actif${state.clients.length!==1?'s':''}.<br><br>
-      ${prochains.length?`<b>⚠️ À surveiller :</b> ${prochains.map(c=>c.client+' ('+c.type+')').join(', ')} prévu${prochains.length>1?'s':''} dans les 7 prochains jours.<br><br>`:''}
-      <b>Conseil :</b> ${conseil}
-    </div>`;
-  const txt=`Activité Bowen HydroClean\n\nRevenus : CHF ${rev.toLocaleString()} | Taux de conversion : ${conv}% | Surface nettoyée : ${surf} m² | Revenu moyen : CHF ${avg}\n\nSituation : ${enc.length} en cours, ${pla.length} à planifier, ${ter.length} terminés, ${state.clients.length} clients.\n\n${conseil}`;
-  setAIResult(html,txt);
-}
-
-// Email client — template personnalisé avec mailto
-function aiClientEmail(id){
-  const c=state.clients.find(x=>x.id===id);
-  showAI(`📧 Email pour ${c.nom}`);
-  const prenom=c.nom.split(' ')[0];
-  const sujet=`Nettoyage haute pression — Bowen HydroClean`;
-  const corps=`Bonjour ${prenom},\n\nJ'espère que vous allez bien. Je me permets de vous contacter au sujet de l'entretien de vos extérieurs à ${c.ville}.\n\nChez Bowen HydroClean, nous intervenons pour le nettoyage haute pression de terrasses, façades et toitures en Suisse romande. Si vous souhaitez obtenir un devis gratuit ou planifier une intervention, n'hésitez pas à nous contacter.\n\nNous pouvons intervenir rapidement selon vos disponibilités.\n\nCordialement,\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`;
-  const html=`<div style="margin-bottom:10px;background:var(--bg);padding:10px 13px;border-radius:8px"><span style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase">Objet : </span><span style="font-size:13px;font-weight:600">${sujet}</span></div>${corps.replace(/\n/g,'<br>')}`;
-  document.getElementById('aiBody').innerHTML=`<div class="ai-result">${html}</div>`;
-  document.getElementById('aiActions').innerHTML=`
-    <button class="copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify('Objet: '+sujet+'\n\n'+corps)});this.textContent='✓ Copié !';setTimeout(()=>this.innerHTML='📋 Copier',2000)">📋 Copier</button>
-    <button class="btn btn-primary btn-sm" onclick="window.location.href='mailto:${c.email}?subject='+encodeURIComponent('${sujet}')+'&body='+encodeURIComponent(${JSON.stringify(corps)})">📬 Ouvrir dans Mail</button>
-    <button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`;
-}
-
-// Email chantier — confirmation ou suivi selon statut
-function aiChanEmail(id){
-  const c=state.chantiers.find(x=>x.id===id);
-  showAI(`📧 Email — ${c.type}`);
-  const prenom=c.client.split(' ')[0];
-  const isConf=c.statut==='Planifié'||c.statut==='En attente';
-  const sujet=isConf?`Confirmation de votre intervention — Bowen HydroClean`:`Suivi de chantier — Bowen HydroClean`;
-  const corps=isConf
-    ?`Bonjour ${prenom},\n\nNous confirmons votre intervention pour le nettoyage ${c.type.toLowerCase()} (${c.surface} m²) à ${c.ville}, prévue le ${formatDate(c.date)}.\n\nMerci de vous assurer que la surface est accessible à notre équipe. En cas d'empêchement, veuillez nous prévenir au moins 48h à l'avance.\n\nNous restons disponibles pour toute question.\n\nÀ bientôt,\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`
-    :c.statut==='En cours'
-    ?`Bonjour ${prenom},\n\nNous vous informons que le nettoyage ${c.type.toLowerCase()} (${c.surface} m²) à ${c.ville} est actuellement en cours.\n\nNous vous tiendrons informé dès la fin de l'intervention.\n\nCordialement,\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`
-    :`Bonjour ${prenom},\n\nNous avons le plaisir de vous informer que le nettoyage ${c.type.toLowerCase()} (${c.surface} m²) à ${c.ville} est terminé.\n\nNous espérons que le résultat est à la hauteur de vos attentes. N'hésitez pas à nous contacter pour tout futur besoin.\n\nMerci pour votre confiance !\n\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`;
-  const html=`<div style="margin-bottom:10px;background:var(--bg);padding:10px 13px;border-radius:8px"><span style="font-size:10px;font-weight:700;color:var(--gray);text-transform:uppercase">Objet : </span><span style="font-size:13px;font-weight:600">${sujet}</span></div>${corps.replace(/\n/g,'<br>')}`;
-  document.getElementById('aiBody').innerHTML=`<div class="ai-result">${html}</div>`;
-  document.getElementById('aiActions').innerHTML=`
-    <button class="copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify('Objet: '+sujet+'\n\n'+corps)});this.textContent='✓ Copié !';setTimeout(()=>this.innerHTML='📋 Copier',2000)">📋 Copier</button>
-    <button class="btn btn-primary btn-sm" onclick="window.location.href='mailto:?subject='+encodeURIComponent('${sujet}')+'&body='+encodeURIComponent(${JSON.stringify(corps)})">📬 Ouvrir dans Mail</button>
-    <button class="btn btn-secondary btn-sm" onclick="closeAI()">Fermer</button>`;
-}
-
-// Suggestion de prix — grille tarifaire marché suisse
-function aiPrixSuggest(){
-  showAI('💡 Suggestion de prix — Marché suisse romand');
-  const items=state.devisItems.filter(i=>i.surface>0);
-  const grille=[
-    {type:'Terrasse & allée',min:5,std:7,max:10,note:'Selon état, mousse et accessibilité'},
-    {type:'Façade & mur',min:8,std:10,max:14,note:'Selon hauteur, matériau et salissures'},
-    {type:'Toiture & gouttières',min:10,std:12,max:16,note:'Selon pente, accès et surface végétalisée'},
-  ];
-  let recommandation='';
-  if(items.length>0){
-    recommandation='<div style="margin-bottom:14px"><b>📋 Votre devis actuel :</b><br>'+
-    items.map(item=>{
-      const g=grille.find(x=>x.type===item.type)||grille[0];
-      const statut=item.prixUnit<g.min?'⚠️ En dessous du marché':item.prixUnit>g.max?'⚠️ Au-dessus du marché':'✅ Dans la fourchette';
-      return`<div style="margin-top:8px;padding:10px;background:var(--bg);border-radius:8px"><b>${item.type}</b> — ${item.surface} m² à CHF ${item.prixUnit}/m² <span style="font-size:11px">${statut}</span></div>`;
-    }).join('')+'</div>';
+// ── FLYER HELPERS ─────────────────────────────────────────────────────────────
+function flyerToggle(id){
+  if(!state.flyerSelIds)state.flyerSelIds=new Set();
+  if(state.flyerSelIds.has(id))state.flyerSelIds.delete(id);else state.flyerSelIds.add(id);
+  const row=document.querySelector(`#flyer-client-list [data-id="${id}"]`);
+  if(row){
+    const checked=state.flyerSelIds.has(id);row.style.background=checked?'#EFF6FF':'white';
+    const box=row.querySelector('div');
+    if(box){box.style.borderColor=checked?'var(--blue)':'var(--border)';box.style.background=checked?'var(--blue)':'white';box.innerHTML=checked?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':'';}
   }
-  const html=recommandation+
-    '<b>📊 Grille tarifaire recommandée :</b><br><br>'+
-    grille.map(g=>`
-      <div style="margin-bottom:10px;padding:12px;background:var(--bg);border-radius:9px">
-        <div style="font-weight:700;font-size:13px;margin-bottom:5px">${g.type}</div>
-        <div style="display:flex;gap:8px;margin-bottom:5px">
-          <span style="background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">Min CHF ${g.min}/m²</span>
-          <span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700">Standard CHF ${g.std}/m²</span>
-          <span style="background:#E0F2FE;color:#075985;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600">Max CHF ${g.max}/m²</span>
-        </div>
-        <div style="font-size:11px;color:var(--gray)">💡 ${g.note}</div>
-      </div>`).join('')+
-    '<div style="font-size:11px;color:var(--gray);margin-top:8px">Source : estimation marché Suisse romande 2026. Ajustez selon vos coûts et la complexité.</div>';
-  setAIResult(html,'Grille tarifaire Suisse romande:\nTerrasse: CHF 5-10/m² (standard 7.-)\nFaçade: CHF 8-14/m² (standard 10.-)\nToiture: CHF 10-16/m² (standard 12.-)');
 }
 
-// WHATSAPP
-function sendWhatsApp(){
-  const tel=(document.getElementById('dv-tel')?.value||state.devisTel||'').trim();
-  if(!tel){alert('Veuillez entrer un numéro WhatsApp dans les informations client.');return;}
-  let num=tel.replace(/\s/g,'').replace(/[^0-9+]/g,'');
-  if(num.startsWith('0'))num='41'+num.slice(1);
-  if(num.startsWith('+'))num=num.slice(1);
-  const client=document.getElementById('dv-client')?.value||state.devisClient||'[Client]';
-  const ville=document.getElementById('dv-ville')?.value||state.devisVille||'';
-  const email=document.getElementById('dv-email')?.value||state.devisEmail||'';
-  const items=state.devisItems.filter(i=>i.surface>0);
-  const ht=items.reduce((s,i)=>s+(i.surface*(i.prixUnit||7)),0);
-  const ttc=ht*1.081;
-  const numDevis='BHC-'+new Date().getFullYear()+'-'+String(state.nextDevisId).padStart(3,'0');
-  const datesSection=getDatesText('\n📅 *Dates d\'intervention proposées :*\n');
-  const msg=`Bonjour ${client.split(' ')[0]} 👋\n\nVoici votre devis *${numDevis}* de Bowen HydroClean :\n\n`+
-    items.map(i=>`• ${i.type} — ${i.surface} m² × CHF ${i.prixUnit}/m² = *CHF ${(i.surface*i.prixUnit).toFixed(2)}*`).join('\n')+
-    `\n\n💰 *Total TTC : CHF ${ttc.toFixed(2)}*\n⏳ Validité : 30 jours`+
-    (datesSection?'\n'+datesSection:'')+
-    `\n\nRépondez à ce message pour confirmer une date.\n\n_Bowen HydroClean — www.bowenhydroclean.ch_`;
-  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
-  saveDevisToLog(client,ville,tel,email,items,ht,ttc);
+function flyerSelAll(checked){
+  if(!state.flyerSelIds)state.flyerSelIds=new Set();
+  state.clients.forEach(c=>{if(checked)state.flyerSelIds.add(c.id);else state.flyerSelIds.delete(c.id);});
+  render();
 }
 
-function genDevisEmail(){
-  const client=document.getElementById('dv-client')?.value||state.devisClient||'[Client]';
-  const ville=document.getElementById('dv-ville')?.value||state.devisVille||'[Ville]';
-  const tel=document.getElementById('dv-tel')?.value||state.devisTel||'';
-  const email=document.getElementById('dv-email')?.value||state.devisEmail||'';
-  const items=state.devisItems;
-  const ht=items.reduce((s,i)=>s+(i.surface*(i.prixUnit||7)),0);
-  const ttc=ht*1.081;
-  const num='BHC-'+new Date().getFullYear()+'-'+String(state.nextDevisId).padStart(3,'0');
-  const prestDetail=items.filter(i=>i.surface>0).map(i=>`  • ${i.type} — ${i.surface} m² à CHF ${i.prixUnit}/m²`).join('\n');
-  const datesSection=getDatesText('\nDates d\'intervention proposées :\n');
-  const sujet=`Votre devis Bowen HydroClean – ${num}`;
-  const corps=`Bonjour ${client.split(' ')[0]},\n\nSuite à votre demande, veuillez trouver ci-joint votre devis ${num} pour le nettoyage haute pression à ${ville}.\n\nDétail des prestations :\n${prestDetail||'  • [Prestation à préciser]'}\n\nMontant total TTC : CHF ${ttc.toFixed(2)}\nValidité : 30 jours\n${datesSection?datesSection+'\n':''}\nPour confirmer une date, répondez simplement à cet email ou appelez-nous directement.\n\nCordialement,\nL'équipe Bowen HydroClean\nwww.bowenhydroclean.ch`;
-  window.location.href='mailto:'+email+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
-  saveDevisToLog(client,ville,tel,email,items.filter(i=>i.surface>0),ht,ttc);
+function filtrerClientsFlyer(q){
+  const s=q.toLowerCase();
+  document.querySelectorAll('#flyer-client-list label').forEach(r=>{r.style.display=(!s||r.textContent.toLowerCase().includes(s))?'flex':'none';});
 }
 
-// HELPERS
-function badgeHtml(statut){const m={'Terminé':'bg','En cours':'bb','Planifié':'bo','En attente':'bn'};return`<span class="badge ${m[statut]||'bn'}"><span class="dot"></span>${statut}</span>`;}
-function formatDate(d){if(!d)return'';return new Date(d).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'});}
-function openModal(){document.getElementById('modal').style.display='flex';}
-function closeModal(){document.getElementById('modal').style.display='none';render();}
-
-// ═══════════════════════════════════════════════════════════════════════
-// SYSTÈME DE RAPPELS AUTOMATIQUES — 7H00 LA VEILLE
-// ═══════════════════════════════════════════════════════════════════════
-
-function getTomorrowStr(){
-  const d=new Date();d.setDate(d.getDate()+1);
-  return d.toISOString().split('T')[0];
+function getFlyerClients(){
+  const ids=state.flyerSelIds||new Set();
+  return ids.size?state.clients.filter(c=>ids.has(c.id)):state.clients;
 }
 
-function getChantiersTomorrow(){
-  const tom=getTomorrowStr();
-  return state.chantiers.filter(c=>c.date===tom&&c.statut!=='Terminé'&&(c.employes||[]).length>0);
+async function genererMessageFlyer(){
+  const el=document.getElementById('flyer-msg');if(!el)return;
+  const apiKey=state.settings.apiKey||'';
+  if(!apiKey){alert('Cle API manquante');return;}
+  const type=document.getElementById('flyer-type-ia')?.value||'promo';
+  el.value='Generation en cours...';
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:250,messages:[{role:'user',content:`Message WhatsApp pour flyer ${type} Bowen HydroClean, nettoyage haute pression, ${state.settings.npa||'Domdidier'}. Commence par "Bonjour [Prenom],". Max 4 lignes. Texte brut, aucun emoji.`}]})
+    });
+    const d=await r.json();if(d.error)throw new Error(d.error.message);
+    const msg=supprimerEmojis(d.content?.[0]?.text||'');
+    el.value=msg;state.flyerAiMsg=msg;showToast('Message genere !');
+  }catch(e){el.value='';alert('Erreur : '+e.message);}
 }
 
-function reminderAlreadySentToday(){
-  const today=new Date().toISOString().split('T')[0];
-  return localStorage.getItem('bhc-reminder-sent')===today;
+function loadFlyerImage(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>10*1024*1024){alert('Max 10MB');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{state.flyerImage=e.target.result;render();showToast('Flyer charge !');};
+  reader.readAsDataURL(file);
 }
 
-function markReminderSent(){
-  localStorage.setItem('bhc-reminder-sent',new Date().toISOString().split('T')[0]);
+function envoyerFlyerWA(){
+  const clients=getFlyerClients();
+  const msg=document.getElementById('flyer-msg')?.value||'Bonjour [Prenom] !';
+  if(!clients.length){showToast('Selectionnez au moins un client !');return;}
+  if(state.flyerImage){
+    safeDownload(state.flyerImage,'Flyer-BHC.jpg');
+    showToast('Flyer telecharge — joignez-le dans WhatsApp !');
+  }
+  clients.forEach((c,i)=>{
+    let num=(c.tel||'').replace(/\s/g,'').replace(/[^\d+]/g,'');
+    if(num.startsWith('0'))num='41'+num.slice(1);if(num.startsWith('+'))num=num.slice(1);if(!num)return;
+    const m=supprimerEmojis(msg.replace(/\[Pr[eé]nom\]/gi,c.nom.split(' ')[0]).replace(/\[NOM\]/gi,c.nom));
+    setTimeout(()=>window.open('https://wa.me/'+num+'?text='+encodeURIComponent(m),'_blank'),i*800);
+  });
+}
+
+function envoyerFlyerEmail(){
+  const clients=getFlyerClients();
+  const msg=document.getElementById('flyer-msg')?.value||'';
+  if(!clients.length){showToast('Selectionnez au moins un client !');return;}
+  if(state.flyerImage){
+    safeDownload(state.flyerImage,'Flyer-BHC.jpg');
+  }
+  const emails=clients.map(c=>c.email).filter(Boolean).join(',');
+  try{window.location.href='mailto:'+emails+'?subject=Offre+Bowen+HydroClean&body='+encodeURIComponent(supprimerEmojis(msg));}catch(_e){showToast('Ouvrez votre application email');}
 }
 
 function buildRappelMsg(c,e){
@@ -3807,64 +4699,7 @@ function envoyerRappelEmail(chantierId,employeId){
   const e=state.employes.find(x=>x.id===employeId);
   if(!e.email){alert('Email manquant pour '+e.nom);return;}
   const{sujet,corps}=buildRappelEmail(c,e);
-  window.location.href='mailto:'+e.email+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);
-}
-
-function openReminderModal(auto){
-  const chantiers=getChantiersTomorrow();
-  if(!chantiers.length){if(auto)return;alert('Aucun chantier planifi\u00e9 demain.');return;}
-  const tom=new Date();tom.setDate(tom.getDate()+1);
-  const tomLabel=tom.toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long'});
-
-  let rows='';
-  chantiers.forEach(c=>{
-    const emps=(c.employes||[]).map(id=>state.employes.find(e=>e.id===id)).filter(Boolean);
-    const client=state.clients.find(x=>x.nom===c.client)||{};
-    const addr=[c.adresse||client.adresse||'',c.ville||client.ville||''].filter(Boolean).join(', ');
-    rows+=`<div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px">
-      <div style="font-weight:700;font-size:14px;margin-bottom:3px">${c.client}</div>
-      <div style="font-size:12px;color:var(--gray);margin-bottom:10px">${c.type} \u00b7 ${c.surface} m\u00b2 \u00b7 ${addr||c.ville}</div>
-      <div style="display:flex;flex-direction:column;gap:8px">
-        ${emps.map(e=>`
-          <div style="display:flex;align-items:center;justify-content:space-between;background:white;border-radius:9px;padding:10px 12px;border:1px solid var(--border)">
-            <div style="display:flex;align-items:center;gap:9px">
-              <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:12px">${e.nom.charAt(0)}</div>
-              <div><div style="font-weight:600;font-size:13px">${e.nom}</div><div style="font-size:11px;color:var(--gray)">${e.role} \u00b7 ${e.tel||'Pas de num\u00e9ro'}</div></div>
-            </div>
-            <div style="display:flex;gap:6px">
-              ${e.tel?`<button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="envoyerRappelWA(${c.id},${e.id})">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.657-.502-5.184-1.379l-.371-.22-3.862.921.977-3.773-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-                WA
-              </button>`:''} 
-              ${e.email?`<button class="btn btn-primary btn-sm" onclick="envoyerRappelEmail(${c.id},${e.id})">📧</button>`:
-                `<span style="font-size:10px;color:var(--gray2)">Pas de contact</span>`}
-            </div>
-          </div>`).join('')}
-      </div>
-    </div>`;
-  });
-
-  document.getElementById('modalContent').innerHTML=`
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" style="color:var(--orange)">⏰ Rappels du lendemain</div>
-        <div style="font-size:12px;color:var(--gray);margin-top:2px">${tomLabel} \u2014 ${chantiers.length} chantier${chantiers.length>1?'s':''}</div>
-      </div>
-      <button class="btn-ghost" onclick="closeModal()">✕</button>
-    </div>
-    <div style="background:var(--orange2);border-radius:9px;padding:10px 13px;font-size:12px;color:#92400E;margin-bottom:14px">
-      ⏰ Rappels automatiques \u2014 Envoyez un message \u00e0 chaque employ\u00e9 pour confirmer leur pr\u00e9sence demain.
-    </div>
-    ${rows}
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;flex-wrap:wrap;gap:8px">
-      <button class="btn btn-sm" style="background:#25D366;color:white;font-weight:700" onclick="envoyerTousRappels()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.858L0 24l6.335-1.508A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.657-.502-5.184-1.379l-.371-.22-3.862.921.977-3.773-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
-        Envoyer WA \u00e0 tous
-      </button>
-      <button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
-    </div>`;
-  openModal();
-  if(auto)markReminderSent();
+  try{window.location.href='mailto:'+e.email+'?subject='+encodeURIComponent(sujet)+'&body='+encodeURIComponent(corps);}catch(_e){showToast('Ouvrez votre application email');}
 }
 
 function envoyerTousRappels(){
@@ -3951,7 +4786,7 @@ function init(){
   const theme=localStorage.getItem('bhc-theme')||'light';
   document.documentElement.setAttribute('data-theme',theme);
   updateDarkIcon();
-  document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long'});
+  try{document.getElementById('topDate').textContent=new Date().toLocaleDateString('fr-CH',{weekday:'short',day:'numeric',month:'long'});}catch(e){document.getElementById('topDate').textContent=new Date().toLocaleDateString();}
   loadStorage();render();updateNotifBadge();
   requestNotifPermission();
   // Lancer la vérification automatique toutes les minutes
@@ -3964,7 +4799,7 @@ function init(){
     if(tom.length>0&&!reminderAlreadySentToday()){
       const alerte=document.createElement('div');
       alerte.id='reminder-banner';
-      alerte.style.cssText='position:fixed;bottom:20px;right:20px;background:var(--orange);color:white;border-radius:12px;padding:14px 18px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:500;display:flex;align-items:center;gap:12px;max-width:320px;cursor:pointer;animation:slideDown 0.3s ease';
+      alerte.style.cssText='position:fixed;bottom:20px;right:20px;background:#F59E0B;color:white;border-radius:12px;padding:14px 18px;box-shadow:0 8px 24px rgba(0,0,0,0.2);z-index:500;display:flex;align-items:center;gap:12px;max-width:320px;cursor:pointer';
       alerte.innerHTML=`<div style="font-size:22px">\u23F0</div><div><div style="font-weight:700;font-size:14px">${tom.length} chantier${tom.length>1?'s':''} demain</div><div style="font-size:12px;opacity:0.9">Cliquez pour envoyer les rappels aux employ\u00e9s</div></div><button onclick="document.getElementById('reminder-banner').remove()" style="background:rgba(255,255,255,0.2);border:none;color:white;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:14px">✕</button>`;
       alerte.onclick=(e)=>{if(e.target.tagName!=='BUTTON'){openReminderModal(false);alerte.remove();}};
       document.body.appendChild(alerte);
