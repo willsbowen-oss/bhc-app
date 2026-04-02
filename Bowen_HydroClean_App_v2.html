@@ -433,6 +433,64 @@ function loadStorage(){
   try{const d=localStorage.getItem('bhc-settings');if(d)state.settings=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-campagnes');if(d)state.campagnes=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-prospection');if(d)state.prospection=JSON.parse(d);}catch(e){}
+
+  // ── RÉPARATION AUTOMATIQUE DES FACTURES ─────────────────────────────
+  // Dédoublonner par id (garder la plus récente)
+  const seen=new Map();
+  state.factures.forEach(f=>{
+    if(!seen.has(f.id)||new Date(f.dateFacture)>=new Date(seen.get(f.id).dateFacture))
+      seen.set(f.id,f);
+  });
+  state.factures=Array.from(seen.values());
+
+  state.factures.forEach(f=>{
+    // 1. Chercher le client via le chantier associé (source la plus fiable)
+    const chan=state.chantiers.find(x=>x.id===f.chantierId)||{};
+    const clientNomChan=chan.client||'';
+
+    // 2. Chercher dans state.clients
+    let clientObj=state.clients.find(x=>x.id===f.clientId);
+    if(!clientObj&&clientNomChan)
+      clientObj=state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===clientNomChan.trim().toLowerCase());
+    if(!clientObj&&f.client)
+      clientObj=state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===f.client.trim().toLowerCase());
+
+    // 3. Corriger les données de la facture
+    if(clientObj){
+      f.clientId=clientObj.id;
+      // Nom client : priorité chantier > client
+      if(clientNomChan)f.client=chan.client;
+      else f.client=clientObj.nom;
+      // Coordonnées
+      if(clientObj.adresse)f.adresse=clientObj.adresse;
+      if(clientObj.ville)f.ville=clientObj.ville;
+      if(clientObj.tel)f.tel=clientObj.tel;
+      if(clientObj.email)f.email=clientObj.email;
+    } else if(clientNomChan){
+      f.client=clientNomChan;
+    }
+
+    // 4. Compléter depuis le chantier
+    if(chan.type&&!f.type)f.type=chan.type;
+    if(chan.surface&&!f.surface)f.surface=chan.surface;
+    if(chan.date&&!f.dateIntervention)f.dateIntervention=chan.date;
+    if(chan.notes&&!f.notes)f.notes=chan.notes;
+    if(chan.adresse&&!f.adresse)f.adresse=chan.adresse;
+    if(chan.ville&&!f.ville)f.ville=chan.ville;
+
+    // 5. Recalculs financiers manquants
+    const ht=parseFloat(f.montantHT||f.montant||0);
+    if(ht&&!f.tva)f.tva=parseFloat((ht*0.081).toFixed(2));
+    if(ht&&!f.ttc)f.ttc=parseFloat((ht*1.081).toFixed(2));
+  });
+
+  // Recalculer nextFactureId pour éviter les doublons
+  if(state.factures.length>0){
+    const maxId=Math.max(...state.factures.map(f=>f.id||0));
+    if(maxId>=state.nextFactureId)state.nextFactureId=maxId+1;
+  }
+
+  try{localStorage.setItem('bhc-factures',JSON.stringify(state.factures));}catch(e){}
 }
 function saveStorage(field){
   const map={clients:'bhc-clients',chantiers:'bhc-chantiers',monthly:'bhc-monthly',employes:'bhc-employes',heures:'bhc-heures',devisLog:'bhc-devislog',factures:'bhc-factures',settings:'bhc-settings',campagnes:'bhc-campagnes',prospection:'bhc-prospection'};
@@ -447,11 +505,11 @@ function showSaveIndicator(){
 // NOTIFICATIONS
 function badgeHtml(statut){
   const map={
-    'Terminé':'<span class="badge bg">Terminé</span>',
-    'En cours':'<span class="badge bb">En cours</span>',
-    'Planifié':'<span class="badge bo">Planifié</span>',
-    'En attente':'<span class="badge bn">En attente</span>',
-    'Annulé':'<span class="badge" style="background:#FEE2E2;color:#DC2626">Annulé</span>',
+    'Terminé':pillBadge('Terminé','#D1FAE5','#059669','✅'),
+    'En cours':pillBadge('En cours','#DBEAFE','#2563EB','🔧'),
+    'Planifié':pillBadge('Planifié','#FEF3C7','#D97706','📅'),
+    'En attente':pillBadge('En attente','#F1F5F9','#64748B','⏳'),
+    'Annulé':pillBadge('Annulé','#FEE2E2','#DC2626','✕'),
   };
   return map[statut]||`<span class="badge bn">${statut}</span>`;
 }
@@ -746,7 +804,7 @@ function renderDashboard(){
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
               <div style="display:flex;align-items:center;gap:10px">
                 <div style="position:relative">
-                  <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:16px">${p.e.nom.charAt(0)}</div>
+                  ${avatarBadge(p.e.nom, p.e.photo||null, 40, 11)}
                   ${medal?`<div style="position:absolute;top:-6px;right:-6px;font-size:14px">${medal}</div>`:''}
                 </div>
                 <div>
@@ -870,6 +928,231 @@ function initChart(){
 }
 
 // CLIENTS
+
+// ── AVATAR BADGE HELPER ─────────────────────────────────────────────────
+// Génère un avatar uniforme pour clients et employés
+function avatarBadge(nom, photo, size=40, radius=11){
+  const s=size+'px';const r=radius+'px';
+  const fs=Math.round(size*0.4)+'px';
+  if(photo){
+    return `<img src="${photo}" style="width:${s};height:${s};border-radius:${r};object-fit:cover;flex-shrink:0;border:2px solid var(--border)">`;
+  }
+  const init=(nom||'?').charAt(0).toUpperCase();
+  return `<div style="width:${s};height:${s};border-radius:${r};background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:${fs};flex-shrink:0">${init}</div>`;
+}
+
+// ── BADGES FIDÉLITÉ SVG ────────────────────────────────────────────────────
+function loyaltyBadgeSVG(nom, size=22){
+  const s=size;
+  const st='display:inline-block;vertical-align:middle;flex-shrink:0;';
+  const h='12,2 20,6.5 20,17.5 12,22 4,17.5 4,6.5';
+  const hi='12,5 17,8 17,16 12,19 7,16 7,8';
+  const star='M12,7.5 L13.1,10.5 L16.3,10.6 L13.7,12.6 L14.6,15.6 L12,13.8 L9.4,15.6 L10.3,12.6 L7.7,10.6 L10.9,10.5Z';
+  if(nom==='Bronze')return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="${st}"><title>Bronze</title>
+    <polygon points="${h}" fill="#CD7F32" stroke="#7A4A1E" stroke-width="1.5"/>
+    <polygon points="${hi}" fill="#A0522D"/>
+    <path d="${star}" fill="#F5C878" stroke="#C8860A" stroke-width="0.5"/>
+  </svg>`;
+  if(nom==='Argent')return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="${st}"><title>Argent</title>
+    <polygon points="${h}" fill="#7B8FA1" stroke="#4A5568" stroke-width="1.5"/>
+    <polygon points="${hi}" fill="#B8C5D0"/>
+    <path d="${star}" fill="#F1F5F9" stroke="#8899AA" stroke-width="0.5"/>
+  </svg>`;
+  if(nom==='Or')return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="${st}"><title>Or</title>
+    <polygon points="12,0 12.5,3.5 12,7 11.5,3.5" fill="#FCD34D"/>
+    <polygon points="24,12 20.5,12.5 17,12 20.5,11.5" fill="#FCD34D"/>
+    <polygon points="12,24 11.5,20.5 12,17 12.5,20.5" fill="#FCD34D"/>
+    <polygon points="0,12 3.5,11.5 7,12 3.5,12.5" fill="#FCD34D"/>
+    <polygon points="21,3 19,5.5 16.5,8 18.5,5.5" fill="#FCD34D"/>
+    <polygon points="21,21 18.5,18.5 16,16 19,18.5" fill="#FCD34D"/>
+    <polygon points="3,21 5.5,18.5 8,16 5.5,19" fill="#FCD34D"/>
+    <polygon points="3,3 5.5,5.5 8,8 5.5,5" fill="#FCD34D"/>
+    <polygon points="${h}" fill="#F59E0B" stroke="#B45309" stroke-width="1"/>
+    <polygon points="${hi}" fill="#FCD34D"/>
+    <path d="${star}" fill="#FFFDE7" stroke="#FDE68A" stroke-width="0.4"/>
+  </svg>`;
+  if(nom==='Diamant')return`<svg width="${s}" height="${s}" viewBox="0 0 24 24" style="${st}"><title>Diamant</title>
+    <polygon points="${h}" fill="#5B21B6" stroke="#3B0F8C" stroke-width="1.5"/>
+    <polygon points="${hi}" fill="#7C3AED"/>
+    <polygon points="${hi}" fill="#A78BFA" opacity="0.5"/>
+    <path d="${star}" fill="white" stroke="#C4B5FD" stroke-width="0.4"/>
+  </svg>`;
+  return '';
+}
+
+// Génère un badge-pilule de statut (fidélité, type client, statut employé)
+function pillBadge(label, bg, color='white', emoji=''){
+  return `<span style="background:${bg};color:${color};font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;white-space:nowrap">${emoji?emoji+' ':''}${label}</span>`;
+}
+
+// Badge fidélité client — affiché uniquement à partir d'Argent (>= 50 pts)
+function fideliteBadge(client){
+  if(!client)return '';
+  const pts=client.points||0;
+  if(pts<50)return ''; // Bronze = niveau par défaut, pas de badge
+  const niv=fideliteNiveau(pts);
+  const bgs={Argent:'#F1F5F9',Or:'#FFFBEB',Diamant:'#F5F3FF'};
+  return pillBadge(niv.nom+' · '+pts+' pts', bgs[niv.nom]||'#F1F5F9', niv.color, niv.emoji);
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+// SYSTÈME DE FIDÉLITÉ
+// ══════════════════════════════════════════════════════════════════════════════
+function fidelitePoints(c){return c.points||0;}
+function fideliteNiveau(pts){
+  if(pts>=200)return{nom:'Diamant',emoji:'💎',color:'#8B5CF6',bg:'#F5F3FF',min:200,avantage:'-20% + nettoyage offert'};
+  if(pts>=100)return{nom:'Or',emoji:'🥇',color:'#F59E0B',bg:'#FFFBEB',min:100,avantage:'-20% sur prochaine facture'};
+  if(pts>=50)return{nom:'Argent',emoji:'🥈',color:'#64748B',bg:'#F1F5F9',min:50,avantage:'-10% sur prochaine facture'};
+  return{nom:'Bronze',emoji:'🥉',color:'#B45309',bg:'#FEF3C7',min:0,avantage:'Priorité agenda'};
+}
+function fideliteProchain(pts){
+  if(pts>=200)return null;
+  const seuils=[50,100,200];
+  const prochain=seuils.find(s=>s>pts);
+  return prochain?{pts:prochain,reste:prochain-pts}:null;
+}
+function ajouterPoints(clientId,pts,raison){
+  const c=state.clients.find(x=>x.id===clientId);
+  if(!c)return;
+  const avant=fideliteNiveau(c.points||0);
+  c.points=(c.points||0)+pts;
+  if(!c.historiqueFidelite)c.historiqueFidelite=[];
+  c.historiqueFidelite.unshift({date:new Date().toISOString().split('T')[0],pts,raison});
+  const apres=fideliteNiveau(c.points);
+  saveStorage('clients');
+  // Notification changement de niveau
+  if(avant.nom!==apres.nom){
+    showToast(apres.emoji+' '+c.nom+' passe au niveau '+apres.nom+' !');
+    // Message WA félicitation
+    setTimeout(()=>{
+      if(confirm('Envoyer un WA de félicitations à '+c.nom+' ?'))fidWAFelicitation(clientId);
+    },1000);
+  } else {
+    showToast('+'+pts+' points pour '+c.nom+' ! Total: '+c.points+' pts');
+  }
+}
+function ouvrirFidelite(clientId){
+  const c=state.clients.find(x=>x.id===clientId);
+  if(!c)return;
+  const pts=c.points||0;
+  const niv=fideliteNiveau(pts);
+  const prochain=fideliteProchain(pts);
+  const pct=prochain?Math.round((pts-niv.min)/(prochain.pts-niv.min)*100):100;
+  const hist=c.historiqueFidelite||[];
+  const actions=[
+    {label:'Autocollant boîte aux lettres posé 🏠',pts:25,key:'autocollant'},
+    {label:'Chantier terminé ✅',pts:10,key:'chantier'},
+    {label:'Parrainage d\'un ami 🤝',pts:20,key:'parrainage'},
+    {label:'Avis Google laissé ⭐',pts:15,key:'avis'},
+    {label:'CHF 100 dépensés 💰',pts:5,key:'depense'},
+  ];
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">${niv.emoji} Fidélité — ${c.nom}</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:2px">${pts} points · Niveau ${niv.nom}</div>
+      </div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+
+    <!-- NIVEAU + BARRE -->
+    <div style="background:${niv.bg};border:1.5px solid ${niv.color}30;border-radius:12px;padding:16px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:28px">${niv.emoji}</span>
+          <div>
+            <div style="font-weight:800;font-size:16px;color:${niv.color}">${niv.nom}</div>
+            <div style="font-size:11px;color:var(--gray)">${niv.avantage}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:${niv.color}">${pts}</div>
+          <div style="font-size:10px;color:var(--gray);font-weight:700">POINTS</div>
+        </div>
+      </div>
+      ${prochain?`
+      <div style="font-size:11px;color:var(--gray);margin-bottom:5px">Encore <strong>${prochain.reste} pts</strong> pour le niveau suivant</div>
+      <div style="background:rgba(0,0,0,0.1);border-radius:20px;height:8px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:${niv.color};border-radius:20px;transition:width 0.6s"></div>
+      </div>`:'<div style="font-size:12px;color:'+niv.color+';font-weight:700;text-align:center">🎉 Niveau maximum atteint !</div>'}
+    </div>
+
+    <!-- AJOUTER DES POINTS -->
+    <div style="font-weight:700;font-size:13px;margin-bottom:10px">Ajouter des points</div>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">
+      ${actions.map(a=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:white">
+          <div style="font-size:13px;font-weight:500">${a.label}</div>
+          <button onclick="ajouterPoints(${clientId},${a.pts},'${a.label}');closeModal();setTimeout(()=>ouvrirFidelite(${clientId}),300)" style="background:var(--blue);color:white;border:none;border-radius:8px;padding:5px 13px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif">+${a.pts} pts</button>
+        </div>`).join('')}
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1.5px solid var(--border);border-radius:10px;background:white">
+        <input id="pts-custom-label" placeholder="Autre raison..." style="border:none;outline:none;font-size:13px;flex:1;font-family:'DM Sans',sans-serif">
+        <div style="display:flex;gap:6px;align-items:center">
+          <input id="pts-custom-val" type="number" value="10" min="1" max="100" style="width:55px;font-size:12px;padding:4px 8px">
+          <button onclick="const l=document.getElementById('pts-custom-label').value||'Bonus';const v=parseInt(document.getElementById('pts-custom-val').value)||10;ajouterPoints(${clientId},v,l);closeModal();setTimeout(()=>ouvrirFidelite(${clientId}),300)" style="background:var(--green);color:white;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">+ Ajouter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLIQUER RÉDUCTION -->
+    ${pts>=50?`
+    <div style="background:linear-gradient(135deg,var(--navy),var(--blue));border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="color:white;font-weight:700;font-size:14px;margin-bottom:4px">🎁 Appliquer la réduction</div>
+      <div style="color:rgba(255,255,255,0.8);font-size:12px;margin-bottom:10px">${niv.avantage} sur prochaine facture</div>
+      <div style="display:flex;gap:8px">
+        ${pts>=50&&pts<100?`<button onclick="appliquerReduction(${clientId},10);closeModal()" style="background:white;color:var(--navy);border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Appliquer -10%</button>`:''}
+        ${pts>=100?`<button onclick="appliquerReduction(${clientId},20);closeModal()" style="background:white;color:var(--navy);border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">Appliquer -20%</button>`:''}
+        <button onclick="fidWAFelicitation(${clientId})" style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">💬 WA Félicitations</button>
+      </div>
+    </div>`:''}
+
+    <!-- HISTORIQUE -->
+    ${hist.length>0?`
+    <div style="font-weight:700;font-size:13px;margin-bottom:8px">Historique</div>
+    <div style="max-height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:5px">
+      ${hist.slice(0,10).map(h=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 12px;background:var(--bg);border-radius:8px">
+          <div style="font-size:12px">${h.raison}</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:11px;color:var(--gray)">${h.date}</span>
+            <span style="font-weight:700;color:var(--green);font-size:12px">+${h.pts}</span>
+          </div>
+        </div>`).join('')}
+    </div>`:''}
+
+    <div style="display:flex;justify-content:flex-end;margin-top:14px">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
+    </div>`;
+  openModal();
+}
+
+function appliquerReduction(clientId,pct){
+  const c=state.clients.find(x=>x.id===clientId);
+  if(!c)return;
+  c.reductionEnAttente=pct;
+  saveStorage('clients');
+  showToast('✅ Réduction -'+pct+'% enregistrée pour la prochaine facture de '+c.nom);
+}
+
+function fidWAFelicitation(clientId){
+  const c=state.clients.find(x=>x.id===clientId);
+  if(!c)return;
+  const niv=fideliteNiveau(c.points||0);
+  const msg='Bonjour '+c.nom.split(' ')[0]+',\n\nNous sommes ravis de vous informer que vous avez atteint le niveau '+niv.nom+' dans notre programme de fidelite BHC !\n\nVotre avantage: '+niv.avantage+'\n\nMerci pour votre confiance.\nBowen HydroClean - 079 663 88 16';
+  sendWhatsApp(c.tel,msg);
+}
+
+function fidAutocollant(clientId){
+  const c=state.clients.find(x=>x.id===clientId);
+  if(!c)return;
+  if(c.autocollant){showToast('Autocollant déjà posé !');return;}
+  if(!confirm('Confirmer la pose de l\'autocollant chez '+c.nom+' ?'))return;
+  c.autocollant=true;
+  ajouterPoints(clientId,25,'Autocollant boite aux lettres pose 🏠');
+  saveStorage('clients');render();
+}
+
 function renderClients(){
   const selMode=state.clientSelMode||false;
   const selIds=state.clientSelIds||new Set();
@@ -934,12 +1217,17 @@ function renderClients(){
           <div style="display:flex;align-items:center;gap:12px">
             ${selMode?`<div style="width:22px;height:22px;border-radius:5px;border:2px solid ${isSel?'var(--blue)':'var(--border)'};background:${isSel?'var(--blue)':'white'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s">
               ${isSel?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>':''}</div>`:''}
-            <div style="width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,${c.type==='Particulier'?'var(--blue),var(--blue2)':'var(--navy),var(--navy3)'});display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;flex-shrink:0">${c.nom.charAt(0)}</div>
+            ${avatarBadge(c.nom, c.photo||null, 40, 11)}
             <div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <div style="font-weight:700;font-size:15px">${c.nom}</div>
-                <span class="badge ${c.type==='Particulier'?'bb':'bo'}" style="font-size:10px">${c.type}</span>
-                ${hasSpecs?`<span style="background:#EFF6FF;color:var(--blue);font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:0.5px">📋 SPÉC.</span>`:''}
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:5px">
+                  ${loyaltyBadgeSVG(fideliteNiveau(c.points||0).nom, 20)}
+                  <span style="font-weight:700;font-size:15px">${c.nom}</span>
+                </div>
+                ${pillBadge(c.type, c.type==='Particulier'?'#EFF6FF':'#EEF2FF', c.type==='Particulier'?'#3B82F6':'#4F46E5')}
+                ${hasSpecs?pillBadge('SPÉC.','#EFF6FF','var(--blue)','📋'):''}
+                ${c.autocollant?pillBadge('Ambassadeur','#D1FAE5','#059669','🏠'):''}
+                ${c.reductionEnAttente?pillBadge('-'+c.reductionEnAttente+'% en attente','#FEE2E2','var(--red)','🎁'):''}
               </div>
               <div style="font-size:12px;color:var(--gray);margin-top:2px">
                 ${c.adresse?`<span style="font-weight:500;color:var(--text)">${c.adresse}, ${c.ville||''}</span> · `:''}${c.email||'—'} · ${c.tel||'—'}
@@ -954,6 +1242,8 @@ function renderClients(){
             <button class="btn btn-secondary btn-sm" onclick="openEditClient(${c.id})">✏️ Modifier</button>
             <button class="btn btn-ai btn-sm" onclick="aiClientEmail(${c.id})">📧 Email</button>
             <button class="btn btn-primary btn-sm" onclick="goClientDevis(${c.id})">Devis</button>
+            <button onclick="ouvrirFidelite(${c.id})" style="background:linear-gradient(135deg,#F59E0B,#D97706);color:white;border:none;border-radius:8px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px">🏆 Fidélité</button>
+            ${!c.autocollant?`<button onclick="fidAutocollant(${c.id})" style="background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;border-radius:8px;padding:5px 11px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif">🏠 Autocollant</button>`:`<span style="font-size:11px;color:#059669;font-weight:700">🏠 Autocollant ✅</span>`}
           </div>
         </div>
         <div id="specs-${c.id}" style="display:none;border-top:1px solid var(--border);background:var(--bg);padding:16px">
@@ -1243,11 +1533,13 @@ function renderEquipeEmployes(tabBar){
       const chantiersActifs=state.chantiers.filter(c=>c.statut!=='Terminé'&&(c.employes||[]).includes(e.id));
       return`<div class="card" style="position:relative${!e.actif?';opacity:0.6':''}">
         <div style="position:absolute;top:14px;right:14px">
-          <span style="background:${e.actif?'#D1FAE5':'#F1F5F9'};color:${e.actif?'#059669':'#64748B'};font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px">${e.actif?'Actif':'Inactif'}</span>
+          ${pillBadge(e.actif?'Actif':'Inactif', e.actif?'#D1FAE5':'#F1F5F9', e.actif?'#059669':'#64748B')}
         </div>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
-          <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;flex-shrink:0">${e.nom.charAt(0)}</div>
-          <div>
+          ${e.photo
+            ?`<img src="${e.photo}" style="width:44px;height:44px;border-radius:12px;object-fit:cover;flex-shrink:0;border:2px solid var(--border)">`
+            :`${avatarBadge(e.nom, e.photo||null, 44, 12)}`}
+          <div style="flex:1">
             <div style="font-weight:700;font-size:15px">${e.nom}</div>
             <div style="font-size:12px;color:var(--gray)">${e.role}</div>
           </div>
@@ -1318,7 +1610,7 @@ function renderEquipeHeures(tabBar){
       return`<div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800">${e.nom.charAt(0)}</div>
+            ${avatarBadge(e.nom, e.photo||null, 36, 10)}
             <div><div style="font-weight:700">${e.nom}</div><div style="font-size:11px;color:var(--gray)">${e.role} · CHF ${e.tauxHoraire}.—/h</div></div>
           </div>
           <div style="display:flex;gap:10px;align-items:center">
@@ -1389,6 +1681,17 @@ function openAddEmploye(){
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header"><div class="modal-title">Nouvel employé</div><button class="btn-ghost" onclick="closeModal()">✕</button></div>
     <div class="form-grid">
+      <div class="fg full" style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        <div id="e-photo-preview" style="width:60px;height:60px;border-radius:12px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-size:24px;flex-shrink:0">👤</div>
+        <div>
+          <label style="display:block;margin-bottom:5px">Photo (optionnel)</label>
+          <label style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray)">
+            📷 Choisir une photo
+            <input type="file" accept="image/*" style="display:none" onchange="previewEmployePhoto(this,'e-photo-preview','e-photo-data')">
+          </label>
+          <input type="hidden" id="e-photo-data">
+        </div>
+      </div>
       <div class="fg full"><label>Nom complet</label><input id="e-nom" placeholder="Jean Dupuis"></div>
       <div class="fg full"><label>Rôle / Poste</label><input id="e-role" placeholder="Technicien, Chef d'équipe..."></div>
       <div class="fg"><label>Taux horaire (CHF/h)</label><input id="e-taux" type="number" placeholder="35" min="1"></div>
@@ -1402,15 +1705,43 @@ function openAddEmploye(){
   openModal();
 }
 
+function previewEmployePhoto(input, previewId, dataId){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const data=e.target.result;
+    const preview=document.getElementById(previewId);
+    if(preview){preview.innerHTML='';preview.style.padding='0';const img=document.createElement('img');img.src=data;img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:12px';preview.appendChild(img);}
+    const inp=document.getElementById(dataId);
+    if(inp)inp.value=data;
+  };
+  // Resize to max 200px
+  const img=new Image();img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    const max=200;let w=img.width,h=img.height;
+    if(w>h){if(w>max){h=Math.round(h*max/w);w=max;}}else{if(h>max){w=Math.round(w*max/h);h=max;}}
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    const data=canvas.toDataURL('image/jpeg',0.8);
+    const preview=document.getElementById(previewId);
+    if(preview){preview.innerHTML='';preview.style.padding='0';const imgEl=document.createElement('img');imgEl.src=data;imgEl.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:12px';preview.appendChild(imgEl);}
+    const inp=document.getElementById(dataId);if(inp)inp.value=data;
+  };
+  reader.readAsDataURL(file);
+  const r2=new FileReader();r2.onload=e2=>{img.src=e2.target.result;};r2.readAsDataURL(file);
+}
+
 function saveEmploye(){
   const nom=document.getElementById('e-nom').value.trim();
   if(!nom)return alert('Veuillez entrer un nom.');
+  const photo=document.getElementById('e-photo-data')?.value||'';
   state.employes.push({
     id:state.nextEmployeId++,nom,
     role:document.getElementById('e-role').value,
     tauxHoraire:parseFloat(document.getElementById('e-taux').value)||30,
     tel:document.getElementById('e-tel').value,
     email:document.getElementById('e-email').value,
+    photo:photo||null,
     actif:true
   });
   saveStorage('employes');closeModal();render();
@@ -1424,6 +1755,21 @@ function openEditEmploye(id){
       <button class="btn-ghost" onclick="closeModal()">✕</button>
     </div>
     <div class="form-grid">
+      <div class="fg full" style="display:flex;align-items:center;gap:14px;margin-bottom:4px">
+        <div id="ee-photo-preview" style="width:60px;height:60px;border-radius:12px;flex-shrink:0;overflow:hidden;border:2px solid var(--border)">
+          ${e.photo
+            ?`<img src="${e.photo}" style="width:100%;height:100%;object-fit:cover">`
+            :`<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-size:24px">${e.nom.charAt(0)}</div>`}
+        </div>
+        <div>
+          <label style="display:block;margin-bottom:5px">Photo</label>
+          <label style="display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--gray)">
+            📷 Changer la photo
+            <input type="file" accept="image/*" style="display:none" onchange="previewEmployePhoto(this,'ee-photo-preview','ee-photo-data')">
+          </label>
+          <input type="hidden" id="ee-photo-data" value="${e.photo||''}">
+        </div>
+      </div>
       <div class="fg full"><label>Nom complet</label><input id="ee-nom" value="${e.nom||''}"></div>
       <div class="fg full"><label>Rôle / Poste</label><input id="ee-role" value="${e.role||''}"></div>
       <div class="fg"><label>Taux horaire (CHF/h)</label><input id="ee-taux" type="number" value="${e.tauxHoraire||30}" min="1"></div>
@@ -1451,6 +1797,8 @@ function saveEditEmploye(id){
   e.tel=document.getElementById('ee-tel').value;
   e.email=document.getElementById('ee-email').value;
   e.actif=document.getElementById('ee-actif').value==='true';
+  const photo=document.getElementById('ee-photo-data')?.value;
+  if(photo)e.photo=photo;
   saveStorage('employes');closeModal();render();
 }
 
@@ -1514,7 +1862,7 @@ function openAffectation(chanId){
         const assigned=chan.employes.includes(e.id);
         return`<div style="display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:10px;border:1.5px solid ${assigned?'var(--blue)':'var(--border)'};background:${assigned?'#F0F9FF':'white'}">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px">${e.nom.charAt(0)}</div>
+            ${avatarBadge(e.nom, e.photo||null, 32, 8)}
             <div><div style="font-weight:600;font-size:13px">${e.nom}</div><div style="font-size:11px;color:var(--gray)">${e.role} · CHF ${e.tauxHoraire}/h</div></div>
           </div>
           <button onclick="toggleAffectation(${chanId},${e.id})" class="btn ${assigned?'btn-primary':'btn-secondary'} btn-sm">${assigned?'✓ Affecté':'+ Affecter'}</button>
@@ -1818,7 +2166,7 @@ function ouvrirBriefingModal(chantierId){
       ${emps.map(e=>`
         <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:10px;border:1.5px solid var(--border);background:white">
           <div style="display:flex;align-items:center;gap:10px">
-            <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:13px">${e.nom.charAt(0)}</div>
+            ${avatarBadge(e.nom, e.photo||null, 32, 9)}
             <div>
               <div style="font-weight:700;font-size:13px">${e.nom}</div>
               <div style="font-size:11px;color:var(--gray)">${e.role} · ${e.tel||'Aucun numéro'}</div>
@@ -1922,7 +2270,20 @@ function advanceChan(id){
   const flow={'En attente':'Planifié','Planifié':'En cours','En cours':'Terminé'};
   if(flow[c.statut]){
     c.statut=flow[c.statut];
-    if(c.statut==='Terminé'){const mo=new Date(c.date).getMonth();state.monthly[mo]=(state.monthly[mo]||0)+c.montant;saveStorage('monthly');}
+    if(c.statut==='Terminé'){
+      const mo=new Date(c.date).getMonth();
+      state.monthly[mo]=(state.monthly[mo]||0)+c.montant;
+      saveStorage('monthly');
+      // Points fidélité automatiques
+      const client=state.clients.find(x=>x.nom===c.client);
+      if(client){
+        // +10 pts pour chantier terminé
+        ajouterPoints(client.id,10,'Chantier terminé ✅');
+        // +5 pts par tranche de CHF 100
+        const ptsMontant=Math.floor((c.montant||0)/100)*5;
+        if(ptsMontant>0)setTimeout(()=>ajouterPoints(client.id,ptsMontant,'CHF '+c.montant+' dépensés 💰'),500);
+      }
+    }
     saveStorage('chantiers');render();updateNotifBadge();
   }
 }
@@ -1958,7 +2319,7 @@ function openAddChantier(){
                 onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor=this.querySelector('input').checked?'var(--blue)':'var(--border)'"
                 onclick="this.style.background=this.querySelector('input').checked?'white':'#F0F9FF';this.style.borderColor=this.querySelector('input').checked?'var(--border)':'var(--blue)'">
                 <input type="checkbox" value="${e.id}" style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0">
-                <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:12px;flex-shrink:0">${e.nom.charAt(0)}</div>
+                ${avatarBadge(e.nom, e.photo||null, 30, 8)}
                 <div style="flex:1">
                   <div style="font-weight:600;font-size:13px">${e.nom}</div>
                   <div style="font-size:11px;color:var(--gray)">${e.role} · CHF ${e.tauxHoraire}/h</div>
@@ -2177,7 +2538,7 @@ function showDayDetail(dateStr){
                   ${emps.map(e=>{
                     const hEmp=hChan.find(h=>h.employeId===e.id);
                     return`<div style="display:flex;align-items:center;gap:7px;background:white;border:1px solid var(--border);border-radius:9px;padding:7px 11px">
-                      <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:11px;flex-shrink:0">${e.nom.charAt(0)}</div>
+                      ${avatarBadge(e.nom, e.photo||null, 28, 8)}
                       <div>
                         <div style="font-weight:600;font-size:12px">${e.nom}</div>
                         <div style="font-size:10px;color:var(--gray)">${e.role}</div>
@@ -2392,7 +2753,7 @@ function creerChantierDepuisDevis(devisId){
           ${empOptions.map(e=>`
             <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:9px;border:1.5px solid var(--border);cursor:pointer">
               <input type="checkbox" value="${e.id}" style="width:16px;height:16px;accent-color:var(--blue);cursor:pointer;flex-shrink:0">
-              <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,var(--navy),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:11px;flex-shrink:0">${e.nom.charAt(0)}</div>
+              ${avatarBadge(e.nom, e.photo||null, 28, 7)}
               <div><div style="font-weight:600;font-size:13px">${e.nom}</div><div style="font-size:11px;color:var(--gray)">${e.role}</div></div>
             </label>`).join('')}
         </div>
@@ -2579,6 +2940,7 @@ function renderFactures(){
     <div><div class="page-title">Factures</div><div class="page-sub">${state.factures.length} facture${state.factures.length!==1?'s':''} générée${state.factures.length!==1?'s':''}</div></div>
     <div class="hdr-actions">
       <button class="btn btn-secondary btn-sm" onclick="openBankSettings()">⚙️ Coordonnées bancaires</button>
+      <button class="btn btn-secondary btn-sm" onclick="reparerFactures()">🔧 Réparer les factures</button>
       <button class="btn btn-primary" onclick="openNouvelleFacture()">+ Nouvelle facture</button>
     </div>
   </div>
@@ -2608,33 +2970,48 @@ function renderFactures(){
       const enRetard=f.statut!=='payée'&&echeance<now;
       const jours=Math.ceil((echeance-now)/864e5);
       const [bg,fg,ico]=enRetard?statColors.retard:(statColors[f.statut]||['#F1F5F9','#64748B','📄']);
-      return`<div class="card" style="padding:16px${enRetard?';border-left:3px solid var(--red)':''}">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-              <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--navy)">${f.num}</span>
-              <span style="background:${bg};color:${fg};font-size:11px;font-weight:700;padding:3px 9px;border-radius:12px">${ico} ${enRetard?'En retard':f.statut.charAt(0).toUpperCase()+f.statut.slice(1)}</span>
+      const ttcSafe=parseFloat(f.ttc||f.montantHT||0);
+      const clientF=state.clients.find(x=>x.id===f.clientId)
+        ||state.clients.find(x=>x.nom&&f.client&&x.nom.trim().toLowerCase()===f.client.trim().toLowerCase())
+        ||null;
+      return`
+      <div class="swipe-container" id="swipe-wrap-facture-${f.id}" style="position:relative;overflow:hidden;border-radius:14px">
+        <div class="swipe-bg-del" style="position:absolute;inset:0;background:linear-gradient(135deg,#EF4444,#DC2626);display:flex;align-items:center;justify-content:flex-end;padding-right:24px;border-radius:14px;opacity:0;transition:opacity 0.2s;pointer-events:none">
+          <div style="color:white;text-align:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg><div style="font-size:10px;font-weight:700;margin-top:3px">Supprimer</div></div>
+        </div>
+        <div class="swipe-card" data-type="facture" data-id="${f.id}" style="touch-action:pan-y;position:relative;cursor:grab;transition:transform 0.25s ease">
+        <div class="card" style="padding:14px${enRetard?';border-left:3px solid var(--red)':''}">
+          <div style="display:flex;align-items:center;gap:12px">
+            ${avatarBadge(f.client, clientF?.photo||null, 40, 11)}
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
+                <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:var(--navy)">${f.num}</span>
+                ${pillBadge((enRetard?'En retard':f.statut.charAt(0).toUpperCase()+f.statut.slice(1)), bg, fg)}
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;overflow:hidden">
+                ${clientF?loyaltyBadgeSVG(fideliteNiveau(clientF.points||0).nom, 18):''}
+                <span style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.client}</span>
+              </div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px">
+                ${new Date(f.dateFacture).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})}
+                · Éch. ${echeance.toLocaleDateString('fr-CH',{day:'numeric',month:'short'})}
+                ${f.statut!=='payée'?`<span style="color:${enRetard?'var(--red)':'var(--orange)'};font-weight:700;margin-left:4px">${enRetard?'⚠️ En retard':jours+' j.'}</span>`:''}
+              </div>
             </div>
-            <div style="font-weight:600;font-size:14px">${f.client}</div>
-            <div style="font-size:12px;color:var(--gray);margin-top:3px">
-              Facturée le ${new Date(f.dateFacture).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'})}
-              · Échéance ${echeance.toLocaleDateString('fr-CH',{day:'numeric',month:'long'})}
-              ${f.statut!=='payée'?` · <span style="color:${enRetard?'var(--red)':'var(--orange)'};font-weight:700">${enRetard?'En retard de '+(Math.abs(jours))+' j.':jours+' j. restants'}</span>`:''}
+            <div style="text-align:right;flex-shrink:0">
+              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--navy)">CHF ${ttcSafe.toFixed(0)}</div>
+              <div style="font-size:10px;color:var(--gray)">TTC</div>
+              <div style="display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;justify-content:flex-end">
+                <button class="btn btn-sm" style="background:var(--navy);color:white;padding:5px 8px" onclick="showQRModal(${f.id})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h3v-3h-3M17 17v4M21 14v3"/></svg>
+                </button>
+                <button class="btn btn-green btn-sm" onclick="downloadInvoicePDF(${f.id})">⬇️ PDF</button>
+                <button class="btn btn-primary btn-sm" onclick="envoyerFactureEmail(${f.id})">📧</button>
+                ${f.statut!=='payée'?`<button class="btn btn-secondary btn-sm" onclick="marquerPayee(${f.id})">✅</button>`:''}
+              </div>
             </div>
           </div>
-          <div style="text-align:right">
-            <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--navy)">CHF ${f.ttc.toFixed(0)}</div>
-            <div style="font-size:11px;color:var(--gray)">TTC</div>
-            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;justify-content:flex-end">
-              <button class="btn btn-sm" style="background:var(--navy);color:white" onclick="showQRModal(${f.id})">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h3v-3h-3M17 17v4M21 14v3"/></svg>
-                QR
-              </button>
-              <button class="btn btn-green btn-sm" onclick="downloadInvoicePDF(${f.id})">⬇️ PDF</button>
-              <button class="btn btn-primary btn-sm" onclick="envoyerFactureEmail(${f.id})">📧 Envoyer</button>
-              ${f.statut!=='payée'?`<button class="btn btn-secondary btn-sm" onclick="marquerPayee(${f.id})">✅ Payée</button>`:''}
-            </div>
-          </div>
+        </div>
         </div>
       </div>`;}).join('')}
   </div>`;
@@ -2721,6 +3098,7 @@ function saveNouvelleFacture(){
   state.factures.push({
     id:state.nextFactureId++,
     num,
+    clientId:clientObj?.id||null,
     chantierId:null,
     client:clientNom,
     ville:document.getElementById('nf-ville').value.trim(),
@@ -2743,14 +3121,24 @@ function saveNouvelleFacture(){
 
 function genererFacture(chantierId){
   const c=state.chantiers.find(x=>x.id===chantierId);
+  const clientObj=state.clients.find(x=>x.nom&&c.client&&x.nom.trim().toLowerCase()===c.client.trim().toLowerCase())||{};
   const tva=c.montant*0.081;
   const ttc=c.montant+tva;
   const dateFacture=new Date().toISOString().split('T')[0];
   const echeance=new Date(Date.now()+state.settings.delaiPaiement*864e5).toISOString().split('T')[0];
   const num='FAC-'+new Date().getFullYear()+'-'+String(state.nextFactureId).padStart(3,'0');
   state.factures.push({
-    id:state.nextFactureId++,num,chantierId:c.id,client:c.client,
-    ville:c.ville||'',type:c.type,surface:c.surface,
+    id:state.nextFactureId++,num,
+    clientId:clientObj.id||null,
+    chantierId:c.id,
+    client:c.client,
+    adresse:c.adresse||clientObj.adresse||'',
+    ville:c.ville||clientObj.ville||'',
+    tel:clientObj.tel||'',
+    email:clientObj.email||'',
+    type:c.type,surface:c.surface,
+    notes:c.notes||'',
+    dateIntervention:c.date||'',
     dateFacture,dateEcheance:echeance,
     montantHT:c.montant,tva,ttc,statut:'envoyée',
   });
@@ -2782,6 +3170,39 @@ function envoyerFactureEmail(id){
     document.body.appendChild(toast);
     setTimeout(()=>toast.remove(),5000);
   },1200);
+}
+
+function reparerFactures(){
+  let n=0;
+  state.factures.forEach(f=>{
+    // Trouver le bon client
+    const c=state.clients.find(x=>x.id===f.clientId)
+      ||state.clients.find(x=>x.nom&&f.client&&x.nom.trim().toLowerCase()===f.client.trim().toLowerCase());
+    if(c){
+      if(!f.clientId){f.clientId=c.id;n++;}
+      // Mettre à jour les coordonnées depuis le client
+      if(c.adresse&&(!f.adresse||f.adresse!==c.adresse)){f.adresse=c.adresse;n++;}
+      if(c.ville&&(!f.ville||f.ville!==c.ville)){f.ville=c.ville;n++;}
+      if(c.tel&&!f.tel){f.tel=c.tel;n++;}
+      if(c.email&&!f.email){f.email=c.email;n++;}
+      // Corriger le nom client si incohérent
+      if(c.nom&&f.client&&c.nom.trim()!==f.client.trim()){f.client=c.nom;n++;}
+    }
+    // Compléter depuis le chantier
+    const chan=state.chantiers.find(x=>x.id===f.chantierId);
+    if(chan){
+      if(!f.type&&chan.type){f.type=chan.type;n++;}
+      if(!f.surface&&chan.surface){f.surface=chan.surface;n++;}
+      if(!f.dateIntervention&&chan.date){f.dateIntervention=chan.date;n++;}
+      if(!f.notes&&chan.notes){f.notes=chan.notes;n++;}
+    }
+    // Recalculer TVA si manquante
+    if(!f.tva&&f.montantHT){f.tva=parseFloat((f.montantHT*0.081).toFixed(2));n++;}
+    if(!f.ttc&&f.montantHT){f.ttc=parseFloat((f.montantHT*1.081).toFixed(2));n++;}
+  });
+  saveStorage('factures');
+  render();
+  showToast('✅ '+n+' corrections effectuées sur vos factures !');
 }
 
 function openBankSettings(){
@@ -2836,11 +3257,16 @@ function saveBankSettings(){
 function buildSwissQRData(f){
   const s=state.settings;
   const iban=(s.iban||'').replace(/\s/g,'');
-  // Parse debtor address from facture
-  const client=state.clients.find(x=>x.nom===f.client)||{};
-  const debtorAddr=client.adresse||'';
-  const debtorNpa=client.ville||'';
-  const amount=f.ttc.toFixed(2);
+  // Résolution client robuste
+  const chan=state.chantiers.find(x=>x.id===f.chantierId)||{};
+  const client=state.clients.find(x=>x.id===f.clientId)
+    ||(chan.client?state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===chan.client.trim().toLowerCase()):null)
+    ||(f.client?state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===f.client.trim().toLowerCase()):null)
+    ||{};
+  const clientNomQR=chan.client||f.client||client.nom||'';
+  const debtorAddr=f.adresse||client.adresse||'';
+  const debtorNpa=f.ville||client.ville||'';
+  const amount=(f.ttc||((f.montantHT||0)*1.081)||0).toFixed(2);
   const ref=f.num||'';
   const msg='Facture '+ref;
   // Swiss QR Bill format — 31 fields separated by \r\n
@@ -2865,13 +3291,13 @@ function buildSwissQRData(f){
     '',             // UC country
     amount,         // Amount
     'CHF',          // Currency
-    client.nom?'K':'',// Debtor address type
-    client.nom||'', // Debtor name
+    clientNomQR?'K':'',// Debtor address type
+    clientNomQR, // Debtor name
     debtorAddr,     // Debtor address 1
     debtorNpa,      // Debtor address 2 (NPA + city)
     '',             // Debtor address 3
     '',             // Debtor address 4
-    client.nom?'CH':'',// Debtor country
+    clientNomQR?'CH':'',// Debtor country
     'NON',          // Reference type (NON = no reference)
     '',             // Reference
     msg,            // Additional info
@@ -2939,10 +3365,13 @@ function getQRDataUrl(f){
       });
       setTimeout(()=>{
         const canvas=tmp.querySelector('canvas');
-        const url=canvas?canvas.toDataURL('image/png'):null;
+        const img=tmp.querySelector('img');
+        let url=null;
+        if(canvas){url=canvas.toDataURL('image/png');}
+        else if(img){const c2=document.createElement('canvas');c2.width=200;c2.height=200;const ctx=c2.getContext('2d');ctx.drawImage(img,0,0,200,200);url=c2.toDataURL('image/png');}
         document.body.removeChild(tmp);
         resolve(url);
-      },150);
+      },400);
     }catch(e){
       document.body.removeChild(tmp);
       resolve(null);
@@ -2983,28 +3412,56 @@ function buildInvoicePDF(id,qrUrl){
   const f=state.factures.find(x=>x.id===id);
   if(!f){showToast('Facture introuvable');return;}
   const s=state.settings;
-  const client=state.clients.find(x=>x.nom===f.client)||{};
+
+  // ── DONNÉES CONSOLIDÉES ──────────────────────────────────────────────
   const chan=state.chantiers.find(x=>x.id===f.chantierId)||{};
-  // Defensive fallbacks for missing fields
-  const montantHT=f.montantHT||f.montant||0;
-  const ttc=f.ttc||(montantHT*1.081)||0;
+
+  // Résolution client : clientId > chantier > nom facture
+  let client=state.clients.find(x=>x.id===f.clientId)||null;
+  if(!client&&chan.client)
+    client=state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===chan.client.trim().toLowerCase());
+  if(!client&&f.client)
+    client=state.clients.find(x=>x.nom&&x.nom.trim().toLowerCase()===f.client.trim().toLowerCase());
+  client=client||{};
+
+  // Nom client affiché : chantier > facture > client
+  const fClient=chan.client||f.client||client.nom||'Client';
+
+  // Fidélité client
+  const clientPts=client.points||0;
+  const clientNiv=fideliteNiveau(clientPts);
+
+  // Champs financiers
+  const montantHT=parseFloat(f.montantHT||f.montant||chan.montant||0);
+  const tvaVal=parseFloat(f.tva||(montantHT*0.081)||0);
+  const ttcVal=parseFloat(f.ttc||(montantHT+tvaVal)||0);
+
   const fType=f.type||chan.type||'Nettoyage haute pression';
-  const fSurface=f.surface||chan.surface||0;
+  const fSurface=parseFloat(f.surface||chan.surface||0);
   const fAdresse=f.adresse||chan.adresse||client.adresse||'';
   const fVille=f.ville||chan.ville||client.ville||'';
+  const fNotes=f.notes||chan.notes||'';
+  const fDateFacture=f.dateFacture||new Date().toISOString().split('T')[0];
   const fDateEcheance=f.dateEcheance||f.dateFacture||new Date().toISOString().split('T')[0];
-  // Employees who worked on this chantier
+  const fDateIntervention=f.dateIntervention||chan.date||'';
+
+  // Coordonnées client complètes
+  const cAdresse=client.adresse||fAdresse;
+  const cVille=client.ville||fVille;
+  const cTel=client.tel||f.tel||chan.tel||'';
+  const cEmail=client.email||f.email||chan.email||'';
+
+  // Équipe et heures
   const empList=(chan.employes||[]).map(eid=>state.employes.find(e=>e.id===eid)).filter(Boolean);
-  // Hours logged for this chantier
   const hChan=state.heures.filter(h=>h.chantierId===f.chantierId);
   const totalH=hChan.length>0?hChan.reduce((s,h)=>s+h.heures,0):estimerDureeH(fType,fSurface);
   const dureeStr=totalH<1?Math.round(totalH*60)+' min':(Math.floor(totalH)+'h'+(totalH%1?'30':''));
+  const prixM2=fSurface&&montantHT?Math.round(montantHT/fSurface):0;
 
   // ── HEADER ─────────────────────────────────────────────────────────
   doc.setFillColor(11,31,58);doc.rect(0,0,210,52,'F');
   doc.setFillColor(14,165,233);doc.rect(0,0,4,52,'F');
-  // Logo image
-  try{ doc.addImage(LOGO_PDF,'JPEG',10,6,60,30); }
+  try{doc.addImage(LOGO_PDF,'JPEG',10,6,60,30);}
   catch(e){
     doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);
     doc.text('Bowen HydroClean',14,22);
@@ -3012,7 +3469,6 @@ function buildInvoicePDF(id,qrUrl){
   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(148,163,184);
   doc.text((s.adresse||'')+(s.npa?' \u00b7 '+s.npa:''),14,42);
   doc.text('www.bowenhydroclean.ch \u00b7 '+(s.tva||''),14,48);
-  // FACTURE badge - taille adaptée au numéro
   doc.setFillColor(14,165,233);doc.roundedRect(130,8,66,26,3,3,'F');
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);
   doc.text('FACTURE',163,20,{align:'center'});
@@ -3022,43 +3478,58 @@ function buildInvoicePDF(id,qrUrl){
   // ── INFO BAND ───────────────────────────────────────────────────────
   doc.setFillColor(224,242,254);doc.rect(0,52,210,7,'F');
   doc.setTextColor(14,31,58);doc.setFont('helvetica','bold');doc.setFontSize(7.5);
-  doc.text('Date de facture : '+new Date(f.dateFacture).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),14,57);
+  doc.text('Date de facture : '+new Date(fDateFacture).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),14,57);
   doc.text('\u00c9ch\u00e9ance : '+new Date(fDateEcheance).toLocaleDateString('fr-CH',{day:'numeric',month:'long',year:'numeric'}),105,57,{align:'center'});
+  doc.setTextColor(f.statut==='pay\u00e9e'?'#059669':'#DC2626');
   doc.setTextColor(200,0,0);
   doc.text(f.statut==='pay\u00e9e'?'PAY\u00c9E':'\u00c0 PAYER AVANT '+new Date(fDateEcheance).toLocaleDateString('fr-CH'),196,57,{align:'right'});
 
   // ── CLIENT & COMPANY ADDRESS BLOCKS ────────────────────────────────
   let y=70;
-  doc.setFillColor(248,250,252);doc.roundedRect(14,y,88,36,2,2,'F');
-  doc.setFillColor(14,165,233);doc.rect(14,y,2,36,'F');
+  // Hauteur du bloc client — plus grande si badge fidélité Argent+
+  const clientBlockH=clientPts>=50?56:46;
+  doc.setFillColor(248,250,252);doc.roundedRect(14,y,88,clientBlockH,2,2,'F');
+  doc.setFillColor(14,165,233);doc.rect(14,y,2,clientBlockH,'F');
   doc.setTextColor(100,116,139);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.text('FACTURER \u00c0',19,y+8);
-  doc.setTextColor(15,23,42);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(f.client,19,y+16);
+  doc.setTextColor(15,23,42);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(fClient,19,y+16);
+  // Badge fidélité uniquement si Argent, Or ou Diamant (>= 50 pts)
+  if(clientPts>=50){
+    const nivColors={Argent:[100,116,139],Or:[245,158,11],Diamant:[139,92,246]};
+    const rgb=nivColors[clientNiv.nom]||[100,116,139];
+    doc.setFillColor(rgb[0],rgb[1],rgb[2]);
+    doc.roundedRect(19,y+20,44,7,3.5,3.5,'F');
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(6.5);
+    doc.text(clientNiv.nom+' \u00b7 '+clientPts+' pts',41,y+25,{align:'center'});
+  }
   doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(80,80,80);
-  if(client.adresse)doc.text(client.adresse,19,y+22);
-  if(client.ville)doc.text(client.ville,19,y+28);
-  if(client.tel)doc.text(client.tel,19,y+34);
+  let cy=clientPts>=50?y+30:y+22;
+  if(cAdresse){doc.text(cAdresse,19,cy);cy+=6;}
+  if(cVille){doc.text(cVille,19,cy);cy+=6;}
+  if(cTel){doc.text(cTel,19,cy);cy+=6;}
+  if(cEmail){doc.text(cEmail,19,cy);}
 
-  doc.setFillColor(248,250,252);doc.roundedRect(108,y,88,36,2,2,'F');
-  doc.setFillColor(11,31,58);doc.rect(108,y,2,36,'F');
+  doc.setFillColor(248,250,252);doc.roundedRect(108,y,88,clientBlockH,2,2,'F');
+  doc.setFillColor(11,31,58);doc.rect(108,y,2,clientBlockH,'F');
   doc.setTextColor(100,116,139);doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.text('DE LA PART DE',113,y+8);
   doc.setTextColor(15,23,42);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(s.titulaire||'Bowen HydroClean',113,y+16);
   doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(80,80,80);
-  if(s.adresse)doc.text(s.adresse,113,y+22);
-  if(s.npa)doc.text(s.npa,113,y+28);
-  doc.text('www.bowenhydroclean.ch',113,y+34);
-  y+=44;
+  if(s.adresse){doc.text(s.adresse,113,y+22);}
+  if(s.npa){doc.text(s.npa,113,y+28);}
+  doc.text('079 663 88 16',113,y+34);
+  doc.text('www.bowenhydroclean.ch',113,y+40);
+  y+=clientBlockH+8;
 
   // ── INTERVENTION DETAILS ────────────────────────────────────────────
   doc.setFillColor(11,31,58);doc.roundedRect(14,y,182,8,2,2,'F');
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);
   doc.text('D\u00c9TAIL DE L\'INTERVENTION',17,y+5.5);
   y+=11;
-  // Intervention info grid
+  const chanAdresseStr=[fAdresse,fVille].filter(Boolean).join(', ')||'—';
   const infos=[
-    ['Date d\'intervention',chan.date?new Date(chan.date).toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'—'],
-    ['Adresse du chantier',[chan.adresse||client.adresse||'',chan.ville||client.ville||''].filter(Boolean).join(', ')||'—'],
-    ['Dur\u00e9e de l\'intervention',dureeStr+(totalH>0?' ('+totalH+'h effectu\u00e9es)':'')],
-    ['\u00c9quipe intervenante',empList.length>0?empList.map(e=>e.nom+' ('+e.role+')').join(', '):'Non renseign\u00e9'],
+    ['Date d\'intervention', fDateIntervention?new Date(fDateIntervention).toLocaleDateString('fr-CH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}):'—'],
+    ['Adresse du chantier', chanAdresseStr],
+    ['Dur\u00e9e de l\'intervention', totalH>0?dureeStr+' ('+totalH+'h effectu\u00e9es)':'—'],
+    ['\u00c9quipe intervenante', empList.length>0?empList.map(e=>e.nom+' ('+e.role+')').join(', '):'Bowen HydroClean'],
   ];
   infos.forEach((row,i)=>{
     const ry=y+i*9;
@@ -3074,23 +3545,19 @@ function buildInvoicePDF(id,qrUrl){
   doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);
   doc.text('PRESTATIONS',17,y+5.5);doc.text('SURFACE',105,y+5.5);doc.text('CHF/m\u00b2',143,y+5.5);doc.text('MONTANT HT',172,y+5.5,{align:'right'});
   y+=9;
-  // Main prestation
   doc.setFillColor(240,249,255);doc.rect(14,y,182,10,'F');
   doc.setTextColor(15,23,42);doc.setFont('helvetica','normal');doc.setFontSize(9);
-  doc.text(fType||'Nettoyage haute pression',18,y+7);
-  doc.text((fSurface||0)+' m\u00b2',105,y+7);
-  const prixM2=fSurface&&montantHT?Math.round(montantHT/(fSurface||1)):0;
+  doc.text(fType,18,y+7);
+  doc.text(fSurface>0?fSurface+' m\u00b2':'—',105,y+7);
   doc.text(prixM2?'CHF '+prixM2:'—',143,y+7);
   doc.setFont('helvetica','bold');doc.text('CHF '+montantHT.toFixed(2),196,y+7,{align:'right'});
   y+=11;
-  // Notes if any
-  if(chan.notes){
+  if(fNotes){
     doc.setFillColor(255,255,255);doc.rect(14,y,182,8,'F');
     doc.setTextColor(120,120,120);doc.setFont('helvetica','italic');doc.setFontSize(8);
-    doc.text('Note : '+chan.notes,18,y+5.5,{maxWidth:170});
+    doc.text('Note : '+fNotes,18,y+5.5,{maxWidth:170});
     y+=9;
   }
-  // Separator
   doc.setDrawColor(224,242,254);doc.setLineWidth(0.5);doc.line(14,y,196,y);
   y+=5;
 
@@ -3098,9 +3565,9 @@ function buildInvoicePDF(id,qrUrl){
   doc.setFillColor(11,31,58);doc.roundedRect(120,y,76,38,3,3,'F');
   doc.setTextColor(148,163,184);doc.setFont('helvetica','normal');doc.setFontSize(9);
   doc.text('Sous-total HT',124,y+9);doc.setTextColor(255,255,255);doc.text('CHF '+montantHT.toFixed(2),193,y+9,{align:'right'});
-  doc.setTextColor(148,163,184);doc.text('TVA 8.1%',124,y+18);doc.setTextColor(255,255,255);doc.text('CHF '+f.tva.toFixed(2),193,y+18,{align:'right'});
+  doc.setTextColor(148,163,184);doc.text('TVA 8.1%',124,y+18);doc.setTextColor(255,255,255);doc.text('CHF '+tvaVal.toFixed(2),193,y+18,{align:'right'});
   doc.setDrawColor(56,100,130);doc.setLineWidth(0.3);doc.line(124,y+23,193,y+23);
-  doc.setTextColor(0,212,255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('CHF '+ttc.toFixed(2),193,y+33,{align:'right'});
+  doc.setTextColor(0,212,255);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('CHF '+ttcVal.toFixed(2),193,y+33,{align:'right'});
   doc.setTextColor(255,255,255);doc.setFontSize(9.5);doc.text('TOTAL TTC',124,y+33);
   // Left of total: payment notice
   doc.setTextColor(15,23,42);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('Modalit\u00e9s de paiement',14,y+8);
@@ -3120,6 +3587,34 @@ function buildInvoicePDF(id,qrUrl){
   doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(60,80,100);
   doc.text('Nous avons eu le plaisir d\'intervenir chez vous et esp\u00e9rons que le r\u00e9sultat vous satisfait pleinement.',22,y+15,{maxWidth:170});
   doc.text('N\'h\u00e9sitez pas \u00e0 nous recommander \u00e0 votre entourage. Toute l\u00e9quipe reste \u00e0 votre disposition.',22,y+20,{maxWidth:170});
+  y+=28;
+
+  // ── BADGE FIDÉLITÉ DISCRET EN BAS DE PAGE ──────────────────────────
+  const nivColors={Argent:[100,116,139],Or:[245,158,11],Diamant:[139,92,246]};
+  const rgb=clientPts>=50?(nivColors[clientNiv.nom]||[100,116,139]):[100,116,139];
+  const ptsFacture=10+Math.floor(montantHT/100)*5;
+  y+=4;
+  doc.setDrawColor(rgb[0],rgb[1],rgb[2]);doc.setLineWidth(0.3);
+  doc.line(14,y,196,y);
+  y+=4;
+  if(clientPts>=50){
+    // Badge PILULE niveau
+    doc.setFillColor(rgb[0],rgb[1],rgb[2]);
+    doc.roundedRect(14,y,50,8,4,4,'F');
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);
+    doc.text(clientNiv.nom+' \u00b7 '+clientPts+' pts',39,y+5.5,{align:'center'});
+    doc.setTextColor(rgb[0],rgb[1],rgb[2]);doc.setFont('helvetica','normal');doc.setFontSize(7);
+    doc.text(clientNiv.avantage,68,y+5.5);
+  } else {
+    doc.setTextColor(rgb[0],rgb[1],rgb[2]);doc.setFont('helvetica','normal');doc.setFontSize(7);
+    doc.text('Programme fid\u00e9lit\u00e9 BHC — Cumulez des points \u00e0 chaque intervention',14,y+5.5);
+  }
+  // Points gagnés (pilule à droite)
+  doc.setFillColor(rgb[0],rgb[1],rgb[2]);
+  doc.roundedRect(148,y,48,8,4,4,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(7);
+  doc.text('+'+ptsFacture+' pts avec cette facture',172,y+5.5,{align:'center'});
+  y+=14;
 
   // ── SWISS QR BILL — nouvelle page pour éviter toute coupure ─────────
   doc.addPage();
@@ -3146,7 +3641,7 @@ function buildInvoicePDF(id,qrUrl){
   // Montant — côté droit
   doc.setTextColor(100,116,139);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('Montant',148,qrY2+26);
   doc.setTextColor(11,31,58);doc.setFontSize(17);doc.setFont('helvetica','bold');
-  doc.text('CHF '+ttc.toFixed(2),148,qrY2+38);
+  doc.text('CHF '+ttcVal.toFixed(2),148,qrY2+38);
   doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(100,100,100);
   doc.text('R\u00e9f. : '+f.num,148,qrY2+46);
   doc.text('\u00c9ch. : '+new Date(fDateEcheance).toLocaleDateString('fr-CH'),148,qrY2+53);
@@ -3545,11 +4040,16 @@ function initSwipe(){
         setTimeout(()=>{
           const nom=type==='client'
             ?(state.clients.find(x=>x.id===id)?.nom||'ce client')
+            :type==='facture'
+            ?(state.factures.find(x=>x.id===id)?.num+' — '+(state.factures.find(x=>x.id===id)?.client||'cette facture'))
             :(state.chantiers.find(x=>x.id===id)?.client||'ce chantier');
           if(confirm('Supprimer '+nom+' ?')){
             if(type==='client'){
               state.clients=state.clients.filter(x=>x.id!==id);
               saveStorage('clients');
+            } else if(type==='facture'){
+              state.factures=state.factures.filter(x=>x.id!==id);
+              saveStorage('factures');
             } else {
               state.chantiers=state.chantiers.filter(x=>x.id!==id);
               saveStorage('chantiers');
@@ -4259,7 +4759,7 @@ function mkPageCampagne(nav,camps,selIds){
               <div style="width:18px;height:18px;border-radius:4px;border:2px solid ${selIds.has(c.id)?'var(--blue)':'var(--border)'};background:${selIds.has(c.id)?'var(--blue)':'white'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
                 ${selIds.has(c.id)?'<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}
               </div>
-              <div style="width:26px;height:26px;border-radius:6px;background:linear-gradient(135deg,var(--navy),var(--blue));color:white;font-weight:800;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${c.nom.charAt(0)}</div>
+              ${avatarBadge(c.nom, c.photo||null, 26, 6)}
               <div style="flex:1;min-width:0">
                 <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.nom}</div>
                 <div style="font-size:11px;color:var(--gray)">${c.tel||'—'}${c.ville?' · '+c.ville:''}</div>
