@@ -372,6 +372,7 @@ let state={
   equipeTab:'employes',heuresMois:new Date().getMonth(),heuresAnnee:new Date().getFullYear(),
   nextClientId:5,nextChantierId:6,nextEmployeId:3,nextHeureId:4,nextDevisId:4,nextFactureId:2,
   chanFilter:'Tous',selectedEmail:1,
+  emailTab:'modeles',emailLog:[],nextEmailLogId:1,
 };
 const PRIX={'Terrasse & allée':7,'Façade & mur':10,'Toiture & gouttières':12};
 const PRIX_OPTIONS={
@@ -433,6 +434,7 @@ function loadStorage(){
   try{const d=localStorage.getItem('bhc-settings');if(d)state.settings=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-campagnes');if(d)state.campagnes=JSON.parse(d);}catch(e){}
   try{const d=localStorage.getItem('bhc-prospection');if(d)state.prospection=JSON.parse(d);}catch(e){}
+  try{const d=localStorage.getItem('bhc-emaillog');if(d)state.emailLog=JSON.parse(d);}catch(e){}
 
   // ── RÉPARATION AUTOMATIQUE DES FACTURES ─────────────────────────────
   // Dédoublonner par id (garder la plus récente)
@@ -493,7 +495,7 @@ function loadStorage(){
   try{localStorage.setItem('bhc-factures',JSON.stringify(state.factures));}catch(e){}
 }
 function saveStorage(field){
-  const map={clients:'bhc-clients',chantiers:'bhc-chantiers',monthly:'bhc-monthly',employes:'bhc-employes',heures:'bhc-heures',devisLog:'bhc-devislog',factures:'bhc-factures',settings:'bhc-settings',campagnes:'bhc-campagnes',prospection:'bhc-prospection'};
+  const map={clients:'bhc-clients',chantiers:'bhc-chantiers',monthly:'bhc-monthly',employes:'bhc-employes',heures:'bhc-heures',devisLog:'bhc-devislog',factures:'bhc-factures',settings:'bhc-settings',campagnes:'bhc-campagnes',prospection:'bhc-prospection',emailLog:'bhc-emaillog'};
   try{localStorage.setItem(map[field],JSON.stringify(state[field]));showSaveIndicator();}catch(e){}
 }
 function showSaveIndicator(){
@@ -4304,49 +4306,175 @@ function genDevisEmail(devisId){
 }
 
 // ══════════════════════════════════════════════════════════
-// EMAILS PAGE
+// EMAILS PAGE — gestion automatisée
 // ══════════════════════════════════════════════════════════
-function renderEmails(){
-  const templates=[
-    {titre:'Confirmation de rendez-vous',icon:'📅',sujet:'Confirmation RDV - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous confirmons votre rendez-vous pour le nettoyage haute pression.\n\nDate: [DATE]\nAdresse: [ADRESSE]\n\nN'hesitez pas a nous contacter pour toute question.\n\nCordialement,\nBowen HydroClean\n079 663 88 16`},
-    {titre:'Rappel de paiement',icon:'💶',sujet:'Rappel - Facture Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous vous rappelons que votre facture du [DATE] d'un montant de CHF [MONTANT] reste a regler.\n\nMerci de proceder au paiement dans les meilleurs delais.\n\nCordialement,\nBowen HydroClean`},
-    {titre:'Remerciement apres intervention',icon:'⭐',sujet:'Merci pour votre confiance - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous vous remercions d'avoir fait appel a Bowen HydroClean.\n\nNous esperons que vous etes satisfait du travail effectue. N'hesitez pas a nous recommander a vos proches.\n\nCordialement,\nBowen HydroClean`},
-    {titre:'Offre saisonniere',icon:'🌿',sujet:'Offre printemps - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nLe printemps est arrive ! C'est le moment ideal pour nettoyer vos terrasses, facades et allees.\n\nBowen HydroClean vous propose un devis gratuit et sans engagement.\n\nContactez-nous au 079 663 88 16.\n\nCordialement,\nBowen HydroClean`},
-    {titre:'Suivi satisfaction',icon:'😊',sujet:'Votre avis nous interesse - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nSuite a notre intervention, nous souhaitons nous assurer de votre satisfaction.\n\nEtes-vous satisfait du resultat ? Avez-vous des remarques ?\n\nVotre retour nous aide a nous ameliorer.\n\nCordialement,\nBowen HydroClean`},
+
+function emailGetTemplates(){
+  return [
+    {id:0,titre:'Confirmation de rendez-vous',icon:'📅',categorie:'rdv',
+      sujet:'Confirmation RDV - Bowen HydroClean',
+      corps:"Bonjour [Prénom],\n\nNous confirmons votre rendez-vous pour le nettoyage haute pression.\n\nDate : [DATE]\nAdresse : [ADRESSE]\n\nN'hésitez pas à nous contacter pour toute question.\n\nCordialement,\nBowen HydroClean\n079 663 88 16"},
+    {id:1,titre:'Rappel de paiement',icon:'💶',categorie:'facturation',
+      sujet:'Rappel - Facture Bowen HydroClean',
+      corps:"Bonjour [Prénom],\n\nNous vous rappelons que votre facture du [DATE] d'un montant de CHF [MONTANT] est encore à régler.\n\nMerci de procéder au paiement dans les meilleurs délais.\n\nCordialement,\nBowen HydroClean\n079 663 88 16"},
+    {id:2,titre:'Remerciement après intervention',icon:'⭐',categorie:'satisfaction',
+      sujet:'Merci pour votre confiance - Bowen HydroClean',
+      corps:"Bonjour [Prénom],\n\nNous vous remercions d'avoir fait appel à Bowen HydroClean.\n\nNous espérons que vous êtes satisfait du travail effectué. N'hésitez pas à nous recommander à vos proches.\n\nCordialement,\nBowen HydroClean\n079 663 88 16"},
+    {id:3,titre:'Offre saisonnière',icon:'🌿',categorie:'marketing',
+      sujet:'Offre printemps - Bowen HydroClean',
+      corps:"Bonjour [Prénom],\n\nLe printemps est arrivé ! C'est le moment idéal pour nettoyer vos terrasses, façades et allées.\n\nBowen HydroClean vous propose un devis gratuit et sans engagement.\n\nContactez-nous au 079 663 88 16 ou répondez à cet email.\n\nCordialement,\nBowen HydroClean"},
+    {id:4,titre:'Suivi satisfaction',icon:'😊',categorie:'satisfaction',
+      sujet:'Votre avis nous intéresse - Bowen HydroClean',
+      corps:"Bonjour [Prénom],\n\nSuite à notre intervention, nous souhaitons nous assurer de votre satisfaction.\n\nÊtes-vous satisfait du résultat ? Avez-vous des remarques ?\n\nVotre retour nous aide à nous améliorer.\n\nCordialement,\nBowen HydroClean\n079 663 88 16"},
   ];
-  return `
-  <div class="page-header">
-    <div><div class="page-title">Emails</div><div class="page-sub">5 modeles prets a utiliser</div></div>
+}
+
+function emailGetAutomations(){
+  const now=new Date();
+  const suggestions=[];
+
+  // 1. Chantiers terminés dans les 14 derniers jours → remerciement
+  const cutoff14=new Date(now);cutoff14.setDate(cutoff14.getDate()-14);
+  const chanTermines=state.chantiers.filter(c=>c.statut==='Terminé'&&new Date(c.date)>=cutoff14&&new Date(c.date)<=now);
+  if(chanTermines.length>0){
+    const clientIds=[...new Set(chanTermines.map(c=>{const cl=state.clients.find(x=>x.nom===c.client);return cl?.id;}).filter(Boolean))];
+    if(clientIds.length>0)suggestions.push({id:'remerciement',titre:'Remerciements à envoyer',desc:chanTermines.length+' chantier'+(chanTermines.length>1?'s':'')+' terminé'+(chanTermines.length>1?'s':'')+' cette quinzaine',icon:'⭐',urgence:'info',templateIdx:2,clientIds,count:clientIds.length});
+  }
+
+  // 2. Devis sans réponse depuis ≥7 jours → relance
+  const devisAttente=state.devisLog.filter(d=>{if(d.statut!=='envoyé'&&d.statut!=='en attente')return false;return Math.floor((now-new Date(d.dateEnvoi))/864e5)>=7;});
+  if(devisAttente.length>0){
+    const clientIds=[...new Set(devisAttente.map(d=>{const cl=state.clients.find(x=>x.nom===d.client);return cl?.id;}).filter(Boolean))];
+    if(clientIds.length>0)suggestions.push({id:'relance-devis',titre:'Relancer les devis en attente',desc:devisAttente.length+' devis sans réponse depuis +7 jours',icon:'📋',urgence:'warning',templateIdx:0,clientIds,count:clientIds.length});
+  }
+
+  // 3. Factures impayées échues → rappel paiement
+  const facImpayees=state.factures.filter(f=>{if(f.statut==='payée')return false;const ech=new Date(f.dateEcheance||f.dateFacture);return ech<now;});
+  if(facImpayees.length>0){
+    const clientIds=[...new Set(facImpayees.map(f=>{const cl=state.clients.find(x=>x.nom===f.client||x.id===f.clientId);return cl?.id;}).filter(Boolean))];
+    if(clientIds.length>0)suggestions.push({id:'rappel-paiement',titre:'Rappels de paiement',desc:facImpayees.length+' facture'+(facImpayees.length>1?'s':'')+' impayée'+(facImpayees.length>1?'s':''),icon:'💶',urgence:'danger',templateIdx:1,clientIds,count:clientIds.length});
+  }
+
+  // 4. Clients sans chantier depuis 6 mois → relance inactive
+  const sixMois=new Date(now);sixMois.setMonth(sixMois.getMonth()-6);
+  const clientsInactifs=state.clients.filter(c=>{
+    if(!c.email)return false;
+    const last=state.chantiers.filter(ch=>ch.client===c.nom).sort((a,b)=>new Date(b.date)-new Date(a.date))[0];
+    return !last||new Date(last.date)<sixMois;
+  });
+  if(clientsInactifs.length>0)suggestions.push({id:'clients-inactifs',titre:'Relancer les clients inactifs',desc:clientsInactifs.length+' client'+(clientsInactifs.length>1?'s':'')+' sans activité depuis +6 mois',icon:'🔄',urgence:'info',templateIdx:3,clientIds:clientsInactifs.map(c=>c.id),count:clientsInactifs.length});
+
+  // 5. Chantiers planifiés dans les 7 prochains jours → confirmation
+  const in7=new Date(now);in7.setDate(in7.getDate()+7);
+  const chanVenir=state.chantiers.filter(c=>{if(c.statut!=='Planifié'&&c.statut!=='En attente')return false;const d=new Date(c.date);return d>=now&&d<=in7;});
+  if(chanVenir.length>0){
+    const clientIds=[...new Set(chanVenir.map(c=>{const cl=state.clients.find(x=>x.nom===c.client);return cl?.id;}).filter(Boolean))];
+    if(clientIds.length>0)suggestions.push({id:'confirmation-rdv',titre:'Confirmer les rendez-vous',desc:chanVenir.length+' chantier'+(chanVenir.length>1?'s':'')+' dans les 7 prochains jours',icon:'📅',urgence:'warning',templateIdx:0,clientIds,count:clientIds.length});
+  }
+
+  return suggestions;
+}
+
+function renderEmails(){
+  const tab=state.emailTab||'modeles';
+  const automations=emailGetAutomations();
+  const log=state.emailLog||[];
+  const clientsAvecEmail=state.clients.filter(c=>c.email).length;
+
+  const tabNav=`<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+    ${[['modeles','Modèles'],['automatisations','Automatisations'],['historique','Historique']].map(([k,l])=>`
+      <button onclick="state.emailTab='${k}';render()" style="padding:8px 18px;border-radius:20px;border:1.5px solid ${tab===k?'var(--blue)':'var(--border)'};background:${tab===k?'var(--blue)':'white'};color:${tab===k?'white':'var(--gray)'};font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif">
+        ${l}${k==='automatisations'&&automations.length>0?' <span style="background:var(--orange);color:white;border-radius:10px;font-size:9px;font-weight:700;padding:1px 6px;margin-left:3px">'+automations.length+'</span>':''}
+      </button>`).join('')}
+  </div>`;
+
+  let content='';
+  if(tab==='automatisations') content=renderEmailAutomationsTab(automations);
+  else if(tab==='historique') content=renderEmailHistoryTab(log);
+  else content=renderEmailTemplatesTab();
+
+  return `<div class="page-header">
+    <div><div class="page-title">Emails</div><div class="page-sub">${clientsAvecEmail} client${clientsAvecEmail!==1?'s':''} avec email · ${log.length} envoi${log.length!==1?'s':''} enregistré${log.length!==1?'s':''}</div></div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:12px">
-    ${templates.map((t,i)=>`
+  ${tabNav}${content}`;
+}
+
+function renderEmailTemplatesTab(){
+  const templates=emailGetTemplates();
+  const catLabel={rdv:'RDV',facturation:'Facturation',satisfaction:'Satisfaction',marketing:'Marketing'};
+  const catBadge={rdv:'bb',facturation:'bo',satisfaction:'bg',marketing:'bn'};
+  return `<div style="display:flex;flex-direction:column;gap:12px">
+    ${templates.map(t=>`
       <div class="card" style="padding:16px">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
           <div style="display:flex;align-items:center;gap:12px">
             <div style="font-size:28px">${t.icon}</div>
             <div>
-              <div style="font-weight:700;font-size:14px">${t.titre}</div>
+              <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+                <span style="font-weight:700;font-size:14px">${t.titre}</span>
+                <span class="badge ${catBadge[t.categorie]||'bn'}">${catLabel[t.categorie]||t.categorie}</span>
+              </div>
               <div style="font-size:11px;color:var(--gray);margin-top:2px">${t.sujet}</div>
             </div>
           </div>
           <div style="display:flex;gap:7px;flex-shrink:0">
-            <button class="btn btn-secondary btn-sm" onclick="voirEmail(${i})">Voir</button>
-            <button class="btn btn-primary btn-sm" onclick="envoyerEmail(${i})">Envoyer</button>
+            <button class="btn btn-secondary btn-sm" onclick="voirEmail(${t.id})">Voir</button>
+            <button class="btn btn-primary btn-sm" onclick="emailOuvrirEnvoi(${t.id},null)">Envoyer</button>
           </div>
         </div>
       </div>`).join('')}
   </div>`;
 }
 
+function renderEmailAutomationsTab(suggestions){
+  if(suggestions.length===0)return `<div style="text-align:center;padding:60px 20px;color:var(--gray)">
+    <div style="font-size:40px;margin-bottom:12px">✅</div>
+    <div style="font-weight:700;font-size:16px;color:var(--text)">Tout est à jour !</div>
+    <div style="font-size:13px;margin-top:6px">Aucune action d'email requise pour l'instant.</div>
+  </div>`;
+
+  const styles={info:'border-left:3px solid var(--blue)',warning:'border-left:3px solid var(--orange)',danger:'border-left:3px solid var(--red)'};
+  return `<div style="font-size:13px;color:var(--gray);margin-bottom:14px">L'application analyse vos données et suggère les emails prioritaires à envoyer.</div>
+  <div style="display:flex;flex-direction:column;gap:12px">
+    ${suggestions.map(s=>`
+      <div class="card" style="padding:16px;${styles[s.urgence]||''}">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="font-size:28px">${s.icon}</div>
+            <div>
+              <div style="font-weight:700;font-size:14px">${s.titre}</div>
+              <div style="font-size:11px;color:var(--gray);margin-top:2px">${s.desc}</div>
+              <div style="font-size:11px;color:var(--blue);margin-top:3px;font-weight:600">${s.count} client${s.count!==1?'s':''} concerné${s.count!==1?'s':''}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:7px;flex-shrink:0">
+            <button class="btn btn-secondary btn-sm" onclick="voirEmail(${s.templateIdx})">Voir</button>
+            <button class="btn btn-primary btn-sm" onclick="emailOuvrirEnvoi(${s.templateIdx},[${s.clientIds.join(',')}])">Envoyer</button>
+          </div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderEmailHistoryTab(log){
+  if(!log||log.length===0)return `<div style="text-align:center;padding:60px 20px;color:var(--gray)">
+    <div style="font-size:40px;margin-bottom:12px">📭</div>
+    <div style="font-weight:700;font-size:16px;color:var(--text)">Aucun envoi enregistré</div>
+    <div style="font-size:13px;margin-top:6px">L'historique de vos envois apparaîtra ici.</div>
+  </div>`;
+  const sorted=[...log].reverse();
+  return `<div class="card" style="padding:0"><div class="table-wrap"><table>
+    <thead><tr><th>Date</th><th>Modèle</th><th>Destinataires</th></tr></thead>
+    <tbody>${sorted.map(e=>`<tr>
+      <td style="white-space:nowrap;font-size:12px">${new Date(e.date).toLocaleDateString('fr-CH',{day:'numeric',month:'short',year:'numeric'})}</td>
+      <td>${e.icon||''} ${e.titre}</td>
+      <td><span class="badge bb">${e.count} client${e.count!==1?'s':''}</span></td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+}
+
 function voirEmail(idx){
-  const templates=[
-    {titre:'Confirmation RDV',icon:'📅',sujet:'Confirmation RDV - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nNous confirmons votre rendez-vous.\n\nN'hesitez pas a nous contacter.\n\nCordialement,\nBowen HydroClean\n079 663 88 16`},
-    {titre:'Rappel paiement',icon:'💶',sujet:'Rappel - Facture Bowen HydroClean',corps:`Bonjour [Prenom],\n\nVotre facture reste a regler.\n\nMerci.\n\nBowen HydroClean`},
-    {titre:'Remerciement',icon:'⭐',sujet:'Merci - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nMerci pour votre confiance.\n\nBowen HydroClean`},
-    {titre:'Offre saisonniere',icon:'🌿',sujet:'Offre printemps - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nOffre speciale printemps disponible.\n\nBowen HydroClean`},
-    {titre:'Suivi satisfaction',icon:'😊',sujet:'Votre avis - Bowen HydroClean',corps:`Bonjour [Prenom],\n\nEtes-vous satisfait ?\n\nBowen HydroClean`},
-  ];
-  const t=templates[idx];if(!t)return;
+  const t=emailGetTemplates()[idx];if(!t)return;
   document.getElementById('modalContent').innerHTML=`
     <div class="modal-header">
       <div><div class="modal-title">${t.icon} ${t.titre}</div></div>
@@ -4357,24 +4485,118 @@ function voirEmail(idx){
     <div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:4px">MESSAGE</div>
     <pre style="background:var(--bg);padding:14px;border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;white-space:pre-wrap;line-height:1.7">${t.corps}</pre>
     <div style="display:flex;gap:8px;margin-top:14px;justify-content:flex-end">
-      <button class="btn btn-primary btn-sm" onclick="envoyerEmail(${idx});closeModal()">Envoyer</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal();emailOuvrirEnvoi(${idx},null)">Envoyer</button>
       <button class="btn btn-secondary btn-sm" onclick="closeModal()">Fermer</button>
     </div>`;
   openModal();
 }
 
-function envoyerEmail(idx){
-  const templates=[
-    {sujet:'Confirmation RDV - Bowen HydroClean',corps:'Bonjour,\n\nNous confirmons votre rendez-vous.\n\nCordialement,\nBowen HydroClean'},
-    {sujet:'Rappel - Facture Bowen HydroClean',corps:'Bonjour,\n\nVotre facture reste a regler.\n\nBowen HydroClean'},
-    {sujet:'Merci - Bowen HydroClean',corps:'Bonjour,\n\nMerci pour votre confiance.\n\nBowen HydroClean'},
-    {sujet:'Offre printemps - Bowen HydroClean',corps:'Bonjour,\n\nOffre speciale disponible.\n\nBowen HydroClean'},
-    {sujet:'Votre avis - Bowen HydroClean',corps:'Bonjour,\n\nEtes-vous satisfait de notre prestation ?\n\nBowen HydroClean'},
-  ];
-  const t=templates[idx];if(!t)return;
-  const emails=state.clients.map(c=>c.email).filter(Boolean).join(',');
-  try{window.location.href='mailto:'+emails+'?subject='+encodeURIComponent(t.sujet)+'&body='+encodeURIComponent(t.corps);}catch(_e){showToast('Ouvrez votre application email');}
+function emailOuvrirEnvoi(templateIdx,preselIds){
+  const t=emailGetTemplates()[templateIdx];if(!t)return;
+  const clients=state.clients.filter(c=>c.email);
+  state._emailSendSel=new Set(preselIds||clients.map(c=>c.id));
+  state._emailSendTplIdx=templateIdx;
+
+  const buildRow=c=>{
+    const sel=state._emailSendSel.has(c.id);
+    return `<label data-id="${c.id}" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;background:${sel?'#EFF6FF':''}">
+      <div onclick="emailToggleClient(${c.id},this)" style="width:18px;height:18px;border-radius:5px;border:1.5px solid ${sel?'var(--blue)':'var(--border)'};background:${sel?'var(--blue)':'white'};flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer">
+        ${sel?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':''}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;font-size:13px">${c.nom}</div>
+        <div style="font-size:11px;color:var(--gray)">${c.email}</div>
+      </div>
+      <span class="badge bn" style="font-size:10px">${c.type||'Client'}</span>
+    </label>`;
+  };
+
+  const firstPrenom=clients.find(c=>state._emailSendSel.has(c.id))?.nom?.split(' ')[0]||'[Prénom]';
+  document.getElementById('modalContent').innerHTML=`
+    <div class="modal-header">
+      <div><div class="modal-title">${t.icon} ${t.titre}</div><div style="font-size:12px;color:var(--gray)">${clients.length} client${clients.length!==1?'s':''} avec email</div></div>
+      <button class="btn-ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div style="margin-bottom:10px;display:flex;gap:7px;flex-wrap:wrap">
+      <button class="btn btn-secondary btn-sm" onclick="emailSelAll(true)">Tous (${clients.length})</button>
+      <button class="btn btn-secondary btn-sm" onclick="emailSelAll(false)">Aucun</button>
+      <button class="btn btn-secondary btn-sm" onclick="emailSelType('Particulier')">Particuliers</button>
+      <button class="btn btn-secondary btn-sm" onclick="emailSelType('Entreprise')">Entreprises</button>
+    </div>
+    <div id="email-client-list" style="max-height:240px;overflow-y:auto;border:1.5px solid var(--border);border-radius:10px;margin-bottom:12px">
+      ${clients.map(buildRow).join('')}
+    </div>
+    <details style="margin-bottom:12px">
+      <summary style="font-size:12px;font-weight:700;color:var(--gray);cursor:pointer;user-select:none">Aperçu du message</summary>
+      <pre style="background:var(--bg);padding:12px;border-radius:9px;font-size:12px;font-family:'DM Sans',sans-serif;white-space:pre-wrap;line-height:1.6;margin-top:8px">${t.corps.replace('[Prénom]',firstPrenom)}</pre>
+    </details>
+    <div style="display:flex;gap:8px;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;color:var(--gray)"><span id="email-sel-num">${state._emailSendSel.size}</span> sélectionné${state._emailSendSel.size!==1?'s':''}</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary btn-sm" onclick="emailEnvoyerSelection()">📧 Envoyer</button>
+      </div>
+    </div>`;
+  openModal();
 }
+
+function emailToggleClient(clientId,el){
+  if(!state._emailSendSel)state._emailSendSel=new Set();
+  const label=el.closest('label');
+  if(state._emailSendSel.has(clientId)){
+    state._emailSendSel.delete(clientId);
+    el.style.borderColor='var(--border)';el.style.background='white';el.innerHTML='';
+    if(label)label.style.background='';
+  }else{
+    state._emailSendSel.add(clientId);
+    el.style.borderColor='var(--blue)';el.style.background='var(--blue)';
+    el.innerHTML='<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>';
+    if(label)label.style.background='#EFF6FF';
+  }
+  const n=document.getElementById('email-sel-num');if(n)n.textContent=state._emailSendSel.size;
+}
+
+function emailSelAll(checked){
+  if(!state._emailSendSel)state._emailSendSel=new Set();
+  state.clients.filter(c=>c.email).forEach(c=>{if(checked)state._emailSendSel.add(c.id);else state._emailSendSel.delete(c.id);});
+  document.querySelectorAll('#email-client-list label').forEach(label=>{
+    const id=parseInt(label.getAttribute('data-id'));const box=label.querySelector('div');
+    label.style.background=checked?'#EFF6FF':'';
+    if(box){box.style.borderColor=checked?'var(--blue)':'var(--border)';box.style.background=checked?'var(--blue)':'white';box.innerHTML=checked?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':'';}
+  });
+  const n=document.getElementById('email-sel-num');if(n)n.textContent=state._emailSendSel.size;
+}
+
+function emailSelType(type){
+  if(!state._emailSendSel)state._emailSendSel=new Set();
+  state._emailSendSel.clear();
+  state.clients.filter(c=>c.email&&c.type===type).forEach(c=>state._emailSendSel.add(c.id));
+  document.querySelectorAll('#email-client-list label').forEach(label=>{
+    const id=parseInt(label.getAttribute('data-id'));const box=label.querySelector('div');const sel=state._emailSendSel.has(id);
+    label.style.background=sel?'#EFF6FF':'';
+    if(box){box.style.borderColor=sel?'var(--blue)':'var(--border)';box.style.background=sel?'var(--blue)':'white';box.innerHTML=sel?'<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>':'';}
+  });
+  const n=document.getElementById('email-sel-num');if(n)n.textContent=state._emailSendSel.size;
+}
+
+function emailEnvoyerSelection(){
+  const t=emailGetTemplates()[state._emailSendTplIdx];if(!t)return;
+  const sel=state._emailSendSel||new Set();
+  if(sel.size===0){showToast('Sélectionnez au moins un client');return;}
+  const selected=state.clients.filter(c=>sel.has(c.id)&&c.email);
+  if(selected.length===0){showToast('Aucun client avec email sélectionné');return;}
+  if(!state.emailLog)state.emailLog=[];
+  if(!state.nextEmailLogId)state.nextEmailLogId=1;
+  state.emailLog.push({id:state.nextEmailLogId++,date:new Date().toISOString(),titre:t.titre,icon:t.icon,templateIdx:t.id,count:selected.length});
+  saveStorage('emailLog');
+  closeModal();
+  const emails=selected.map(c=>c.email).join(',');
+  try{window.location.href='mailto:'+emails+'?subject='+encodeURIComponent(t.sujet)+'&body='+encodeURIComponent(t.corps);}catch(_e){showToast('Ouvrez votre application email');}
+  showToast('Email préparé pour '+selected.length+' client'+(selected.length!==1?'s':''));
+}
+
+// Alias pour compatibilité (utilisé dans la page chantiers/marketing)
+function envoyerEmail(idx){emailOuvrirEnvoi(idx,null);}
 
 // ══════════════════════════════════════════════════════════
 // 📣 MARKETING
